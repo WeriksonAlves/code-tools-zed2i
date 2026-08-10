@@ -1,0 +1,29 @@
+## Binaries
+*.exe
+bin/
+
+# IDE 
+.vscode/
+
+# Build
+build/
+# Virtual Enviroments
+.venv/
+venv/
+*.env
+
+# Compil;es Extensions
+*.so
+*.pyd
+*.dll
+*.tmp
+*.log
+*.bak
+*.dylib
+
+# Python
+__pycache__/
+
+# ROS and ROS2
+.bag
+.mcap
