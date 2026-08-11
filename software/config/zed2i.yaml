@@ -1,0 +1,46 @@
+zed:
+  camera_model: "zed2i"
+  camera_name: "zed"
+  node_name: "tools_zed2i_node"
+  input_namespace: "/zed/zed_node"
+  output_namespace: "/tools_zed2i"
+
+features:
+  left_image: true
+  right_image: true
+  disparity: true
+  imu: true
+  point_cloud: true
+  relay_enabled: true
+
+topics:
+  left_image:
+    input: "/zed/zed_node/left/image_rect_color"
+    output: "/tools_zed2i/left/image_rect_color"
+    type: "sensor_msgs/msg/Image"
+
+  right_image:
+    input: "/zed/zed_node/right/image_rect_color"
+    output: "/tools_zed2i/right/image_rect_color"
+    type: "sensor_msgs/msg/Image"
+
+  disparity:
+    input: "/zed/zed_node/disparity/disparity_image"
+    output: "/tools_zed2i/disparity/disparity_image"
+    type: "stereo_msgs/msg/DisparityImage"
+
+  imu:
+    input: "/zed/zed_node/imu/data"
+    output: "/tools_zed2i/imu/data"
+    type: "sensor_msgs/msg/Imu"
+
+  point_cloud:
+    input: "/zed/zed_node/point_cloud/cloud_registered"
+    output: "/tools_zed2i/point_cloud/cloud_registered"
+    type: "sensor_msgs/msg/PointCloud2"
+
+runtime:
+  qos_profile: "sensor_data"
+  diagnostics_period_sec: 1.0
+  expected_timeout_sec: 2.0
+  enable_intra_process: true

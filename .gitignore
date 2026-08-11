@@ -27,3 +27,5 @@ __pycache__/
 # ROS and ROS2
 .bag
 .mcap
+
+software/
