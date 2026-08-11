@@ -7,10 +7,11 @@ bin/
 
 # Build
 build/
-# Virtual Enviroments
-.venv/
-venv/
-*.env
+install/
+log/
+software/build/
+software/install/
+software/log/
 
 # Compil;es Extensions
 *.so
@@ -23,9 +24,33 @@ venv/
 
 # Python
 __pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
 
 # ROS and ROS2
 .bag
 .mcap
-
-software/
