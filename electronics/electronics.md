@@ -1,9 +1,9 @@
-## Eletronics Folder
+# Electronics
 
-This folder stores all files related to the electronic design of the project, including schematics, PCB layouts, bills of materials (BOM), and documentation for the electronic circuits and hardware.
+This repository does not currently include custom electronic schematics.
 
-### Example Files
-- `main_board.sch`: Schematic diagram of the main board
-- `main_board.pcb`: PCB layout file
-- `bom.xlsx`: Bill of materials
-- `wiring_diagram.pdf`: Wiring diagram for assembly
+The ZED2i camera is expected to be connected through USB 3.0 to the onboard
+computer, typically an NVIDIA Jetson device.
+
+Power distribution, wiring diagrams, and payload-level electronics should be
+documented in the main hardware or payload repository.
