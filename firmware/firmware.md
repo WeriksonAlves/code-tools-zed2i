@@ -1,9 +1,7 @@
-## Firmware Folder
+# Firmware
 
-This folder holds the source code and configuration files for microcontrollers and embedded systems. Typically, these projects use PlatformIO for development and may include code for Arduino, ESP32, or other platforms.
+This repository does not currently include firmware code.
 
-### Example Files
-- `platformio.ini`: PlatformIO configuration file
-- `src/main.cpp`: Main firmware source code
-- `lib/motor_driver.cpp`: Library for motor driver
-- `include/config.h`: Header file for configuration
+The current scope is limited to the ROS 2 and Python software integration of
+the ZED2i camera. Firmware for microcontrollers, payload controllers, or
+auxiliary embedded systems should be stored in the main platform repository.
