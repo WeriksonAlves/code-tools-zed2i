@@ -8,13 +8,58 @@ from time import monotonic
 class TopicHealth:
     has_data: bool = False
     message_count: int = 0
-    last_timestamp_sec: float | None = None
+    first_receive_time_sec: float | None = None
     last_receive_time_sec: float | None = None
 
     def update(self) -> None:
+        current_time_sec = monotonic()
+
+        if self.first_receive_time_sec is None:
+            self.first_receive_time_sec = current_time_sec
+
         self.has_data = True
         self.message_count += 1
-        self.last_receive_time_sec = monotonic()
+        self.last_receive_time_sec = current_time_sec
+
+    def get_elapsed_time_sec(self) -> float | None:
+        if self.first_receive_time_sec is None or self.last_receive_time_sec is None:
+            return None
+
+        return self.last_receive_time_sec - self.first_receive_time_sec
+
+    def get_estimated_frequency_hz(self) -> float | None:
+        elapsed_time_sec = self.get_elapsed_time_sec()
+
+        if elapsed_time_sec is None or elapsed_time_sec <= 0.0:
+            return None
+
+        if self.message_count <= 1:
+            return None
+
+        return (self.message_count - 1) / elapsed_time_sec
+
+    def get_time_since_last_message_sec(self) -> float | None:
+        if self.last_receive_time_sec is None:
+            return None
+
+        return monotonic() - self.last_receive_time_sec
+
+    def is_stale(self, timeout_sec: float) -> bool:
+        time_since_last_message_sec = self.get_time_since_last_message_sec()
+
+        if time_since_last_message_sec is None:
+            return False
+
+        return time_since_last_message_sec > timeout_sec
+
+    def get_status(self, timeout_sec: float) -> str:
+        if not self.has_data:
+            return "NO_DATA"
+
+        if self.is_stale(timeout_sec):
+            return "STALE"
+
+        return "OK"
 
 
 @dataclass
