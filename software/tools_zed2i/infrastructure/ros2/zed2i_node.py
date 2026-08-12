@@ -152,15 +152,34 @@ class Zed2iRosNode(Node, Zed2iFrameReader):
         status_parts = []
 
         for stream_name, health in self._state.topics.items():
-            status = "OK" if health.has_data else "NO_DATA"
+            status = health.get_status(
+                timeout_sec=self._config.runtime.expected_timeout_sec,
+            )
+
+            frequency_hz = health.get_estimated_frequency_hz()
+            message_age_sec = health.get_time_since_last_message_sec()
+
+            frequency_text = (
+                f"{frequency_hz:.2f}"
+                if frequency_hz is not None
+                else "N/A"
+            )
+
+            message_age_text = (
+                f"{message_age_sec:.2f}s"
+                if message_age_sec is not None
+                else "N/A"
+            )
+
             status_parts.append(
-                f"{stream_name}={status}, count={health.message_count}"
+                f"{stream_name}={status}, "
+                f"count={health.message_count}, "
+                f"hz={frequency_text}, "
+                f"age={message_age_text}"
             )
 
         if not status_parts:
-            self.get_logger().warning(
-                "ZED2i diagnostics: no streams configured."
-                )
+            self.get_logger().warning("ZED2i diagnostics: no streams configured.")
             return
 
         diagnostics = " | ".join(status_parts)
