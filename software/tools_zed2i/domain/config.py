@@ -37,6 +37,13 @@ class RuntimeConfig:
 
 
 @dataclass(frozen=True)
+class DiagnosticsConfig:
+    enabled: bool
+    topic: str
+    hardware_id: str
+
+
+@dataclass(frozen=True)
 class Zed2iConfig:
     camera_model: str
     camera_name: str
@@ -48,6 +55,7 @@ class Zed2iConfig:
     features: FeatureConfig
     topics: dict[str, TopicConfig]
     runtime: RuntimeConfig
+    diagnostics: DiagnosticsConfig
 
     @staticmethod
     def from_yaml(config_path: str | Path) -> Zed2iConfig:
@@ -70,10 +78,22 @@ class Zed2iConfig:
                 f"Available presets: {available_presets}"
             )
 
-        stream_selection = StreamSelectionConfig(**presets_config[active_preset])
-
+        stream_selection = StreamSelectionConfig(
+            **presets_config[active_preset]
+        )
         feature_config = FeatureConfig(**raw_config["features"])
         runtime_config = RuntimeConfig(**raw_config["runtime"])
+        diagnostics_config = DiagnosticsConfig(
+            **raw_config.get(
+                "diagnostics",
+                {
+                    "enabled": False,
+                    "topic": "/tools_zed2i/diagnostics",
+                    "hardware_id": "zed2i",
+                },
+            )
+        )
+
         topics_config = raw_config["topics"]
 
         topics = {
@@ -101,6 +121,7 @@ class Zed2iConfig:
             features=feature_config,
             topics=topics,
             runtime=runtime_config,
+            diagnostics=diagnostics_config,
         )
 
     @staticmethod
