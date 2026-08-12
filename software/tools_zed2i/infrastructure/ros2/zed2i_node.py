@@ -36,6 +36,10 @@ class Zed2iRosNode(Node, Zed2iFrameReader):
 
         super().__init__(self._config.node_name)
 
+        self.get_logger().info(
+            f"Using stream preset: {self._config.active_preset}"
+        )
+
         self._state = Zed2iState()
         self._latest_messages: dict[str, Any] = {}
         self._callback_group = ReentrantCallbackGroup()
@@ -71,11 +75,11 @@ class Zed2iRosNode(Node, Zed2iFrameReader):
 
     def _configure_streams(self) -> None:
         feature_flags = {
-            "left_image": self._config.features.left_image,
-            "right_image": self._config.features.right_image,
-            "disparity": self._config.features.disparity,
-            "imu": self._config.features.imu,
-            "point_cloud": self._config.features.point_cloud,
+            "left_image": self._config.stream_selection.left_image,
+            "right_image": self._config.stream_selection.right_image,
+            "disparity": self._config.stream_selection.disparity,
+            "imu": self._config.stream_selection.imu,
+            "point_cloud": self._config.stream_selection.point_cloud,
         }
 
         for stream_name, enabled in feature_flags.items():
@@ -154,7 +158,9 @@ class Zed2iRosNode(Node, Zed2iFrameReader):
             )
 
         if not status_parts:
-            self.get_logger().warning("ZED2i diagnostics: no streams configured.")
+            self.get_logger().warning(
+                "ZED2i diagnostics: no streams configured."
+                )
             return
 
         diagnostics = " | ".join(status_parts)

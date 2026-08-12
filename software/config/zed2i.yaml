@@ -5,13 +5,46 @@ zed:
   input_namespace: "/zed/zed_node"
   output_namespace: "/tools_zed2i"
 
+active_preset: "mapping"
+
 features:
-  left_image: true
-  right_image: true
-  disparity: true
-  imu: true
-  point_cloud: true
   relay_enabled: true
+
+presets:
+  minimal:
+    left_image: true
+    right_image: false
+    disparity: false
+    imu: true
+    point_cloud: false
+
+  stereo:
+    left_image: true
+    right_image: true
+    disparity: true
+    imu: false
+    point_cloud: false
+
+  mapping:
+    left_image: true
+    right_image: true
+    disparity: true
+    imu: true
+    point_cloud: true
+
+  pointcloud_only:
+    left_image: false
+    right_image: false
+    disparity: false
+    imu: true
+    point_cloud: true
+
+  full:
+    left_image: true
+    right_image: true
+    disparity: true
+    imu: true
+    point_cloud: true
 
 topics:
   left_image:
