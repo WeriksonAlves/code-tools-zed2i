@@ -19,6 +19,7 @@ from stereo_msgs.msg import DisparityImage
 
 from tools_zed2i.domain.config import Zed2iConfig
 from tools_zed2i.domain.ports import Zed2iFrameReader
+from tools_zed2i.domain.snapshot import SensorSnapshot
 from tools_zed2i.domain.state import Zed2iState
 
 MESSAGE_TYPES: dict[str, type] = {
@@ -73,6 +74,18 @@ class Zed2iRosNode(Node, Zed2iFrameReader):
     def get_latest_frame(self, stream_name: str) -> Any | None:
         """Return the latest received message for a given stream."""
         return self._latest_messages.get(stream_name)
+
+    def get_sensor_snapshot(self) -> SensorSnapshot:
+        """
+        Return an immutable snapshot with the latest received stream messages.
+        """
+        return SensorSnapshot(
+            left_image=self._latest_messages.get("left_image"),
+            right_image=self._latest_messages.get("right_image"),
+            disparity=self._latest_messages.get("disparity"),
+            imu=self._latest_messages.get("imu"),
+            point_cloud=self._latest_messages.get("point_cloud"),
+        )
 
     def _make_qos_profile(self) -> QoSProfile:
         if self._config.runtime.qos_profile == "sensor_data":
