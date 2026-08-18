@@ -17,6 +17,7 @@ setup(
     install_requires=[
         "setuptools",
         "PyYAML",
+        "numpy",
     ],
     zip_safe=True,
     maintainer="Werikson Alves",

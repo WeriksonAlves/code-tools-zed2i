@@ -331,6 +331,42 @@ without accessing the internal ROS 2 node cache.
 
 ---
 
+## Frame Conversion Utilities
+
+The package provides optional conversion utilities for image-based streams.
+
+These utilities are intentionally not executed inside the main ROS 2 callbacks,
+to keep the relay path lightweight.
+
+Available conversions:
+
+```text
+sensor_msgs/msg/Image -> numpy.ndarray
+sensor_msgs/msg/Image -> OpenCV-compatible image
+stereo_msgs/msg/DisparityImage -> numpy.ndarray
+````
+
+Example:
+
+```python
+from tools_zed2i.application.snapshot_converter import SnapshotConverter
+
+converter = SnapshotConverter()
+converted_snapshot = converter.convert_images_to_bgr(snapshot)
+
+left_image = converted_snapshot.left_image
+right_image = converted_snapshot.right_image
+disparity = converted_snapshot.disparity
+```
+
+Required system packages:
+
+```bash
+sudo apt install python3-opencv ros-humble-cv-bridge
+```
+
+---
+
 ## Tests
 
 Run from the `software/` directory:
