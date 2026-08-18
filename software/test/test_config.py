@@ -69,6 +69,11 @@ def _make_config_data(active_preset: str = "mapping") -> dict[str, Any]:
             "expected_timeout_sec": 2.0,
             "enable_intra_process": True,
         },
+        "diagnostics": {
+            "enabled": True,
+            "topic": "/tools_zed2i/diagnostics",
+            "hardware_id": "zed2i",
+        },
     }
 
 
@@ -100,6 +105,9 @@ def test_load_zed2i_config_from_yaml(tmp_path: Path) -> None:
         "/zed/zed_node/left/image_rect_color"
     )
     assert config.runtime.qos_profile == "sensor_data"
+    assert config.diagnostics.enabled is True
+    assert config.diagnostics.topic == "/tools_zed2i/diagnostics"
+    assert config.diagnostics.hardware_id == "zed2i"
 
 
 def test_load_zed2i_config_with_minimal_preset(tmp_path: Path) -> None:

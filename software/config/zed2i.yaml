@@ -77,3 +77,8 @@ runtime:
   diagnostics_period_sec: 1.0
   expected_timeout_sec: 2.0
   enable_intra_process: true
+
+diagnostics:
+  enabled: true
+  topic: "/tools_zed2i/diagnostics"
+  hardware_id: "zed2i"

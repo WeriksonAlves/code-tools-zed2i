@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 import rclpy
+from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus, KeyValue
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.node import Node
 from rclpy.qos import (
@@ -18,6 +19,7 @@ from stereo_msgs.msg import DisparityImage
 
 from tools_zed2i.domain.config import Zed2iConfig
 from tools_zed2i.domain.ports import Zed2iFrameReader
+from tools_zed2i.domain.snapshot import SensorSnapshot
 from tools_zed2i.domain.state import Zed2iState
 
 MESSAGE_TYPES: dict[str, type] = {
@@ -47,6 +49,17 @@ class Zed2iRosNode(Node, Zed2iFrameReader):
 
         self._relay_publishers: dict[str, Any] = {}
         self._stream_subscriptions: list[Any] = []
+        self._diagnostics_publisher = None
+
+        if self._config.diagnostics.enabled:
+            self._diagnostics_publisher = self.create_publisher(
+                DiagnosticArray,
+                self._config.diagnostics.topic,
+                10,
+            )
+            self.get_logger().info(
+                f"Publishing diagnostics to {self._config.diagnostics.topic}."
+            )
 
         self._configure_streams()
 
@@ -61,6 +74,18 @@ class Zed2iRosNode(Node, Zed2iFrameReader):
     def get_latest_frame(self, stream_name: str) -> Any | None:
         """Return the latest received message for a given stream."""
         return self._latest_messages.get(stream_name)
+
+    def get_sensor_snapshot(self) -> SensorSnapshot:
+        """
+        Return an immutable snapshot with the latest received stream messages.
+        """
+        return SensorSnapshot(
+            left_image=self._latest_messages.get("left_image"),
+            right_image=self._latest_messages.get("right_image"),
+            disparity=self._latest_messages.get("disparity"),
+            imu=self._latest_messages.get("imu"),
+            point_cloud=self._latest_messages.get("point_cloud"),
+        )
 
     def _make_qos_profile(self) -> QoSProfile:
         if self._config.runtime.qos_profile == "sensor_data":
@@ -150,6 +175,7 @@ class Zed2iRosNode(Node, Zed2iFrameReader):
 
     def _publish_diagnostics(self) -> None:
         status_parts = []
+        diagnostic_statuses = []
 
         for stream_name, health in self._state.topics.items():
             status = health.get_status(
@@ -178,12 +204,86 @@ class Zed2iRosNode(Node, Zed2iFrameReader):
                 f"age={message_age_text}"
             )
 
+            diagnostic_statuses.append(
+                self._make_stream_diagnostic_status(
+                    stream_name=stream_name,
+                    status=status,
+                    message_count=health.message_count,
+                    frequency_hz=frequency_hz,
+                    message_age_sec=message_age_sec,
+                )
+            )
+
         if not status_parts:
-            self.get_logger().warning("ZED2i diagnostics: no streams configured.")
+            self.get_logger().warning(
+                "ZED2i diagnostics: no streams configured."
+            )
             return
 
         diagnostics = " | ".join(status_parts)
         self.get_logger().info(f"ZED2i diagnostics: {diagnostics}")
+
+        if self._diagnostics_publisher is not None:
+            self._publish_diagnostics_message(diagnostic_statuses)
+
+    def _make_stream_diagnostic_status(
+        self,
+        stream_name: str,
+        status: str,
+        message_count: int,
+        frequency_hz: float | None,
+        message_age_sec: float | None,
+    ) -> DiagnosticStatus:
+        diagnostic_status = DiagnosticStatus()
+        diagnostic_status.name = f"tools_zed2i/{stream_name}"
+        diagnostic_status.hardware_id = self._config.diagnostics.hardware_id
+        diagnostic_status.message = status
+        diagnostic_status.level = self._get_diagnostic_level(status)
+
+        diagnostic_status.values = [
+            KeyValue(key="stream_name", value=stream_name),
+            KeyValue(key="status", value=status),
+            KeyValue(key="message_count", value=str(message_count)),
+            KeyValue(
+                key="estimated_frequency_hz",
+                value=(
+                    f"{frequency_hz:.2f}"
+                    if frequency_hz is not None
+                    else "N/A"
+                ),
+            ),
+            KeyValue(
+                key="message_age_sec",
+                value=(
+                    f"{message_age_sec:.2f}"
+                    if message_age_sec is not None
+                    else "N/A"
+                ),
+            ),
+        ]
+
+        return diagnostic_status
+
+    @staticmethod
+    def _get_diagnostic_level(status: str) -> int:
+        if status == "OK":
+            return DiagnosticStatus.OK
+
+        if status == "STALE":
+            return DiagnosticStatus.WARN
+
+        return DiagnosticStatus.ERROR
+
+    def _publish_diagnostics_message(
+        self,
+        diagnostic_statuses: list[DiagnosticStatus],
+    ) -> None:
+        diagnostics_message = DiagnosticArray()
+        diagnostics_message.header.stamp = self.get_clock().now().to_msg()
+        diagnostics_message.status = diagnostic_statuses
+
+        if self._diagnostics_publisher is not None:
+            self._diagnostics_publisher.publish(diagnostics_message)
 
 
 def _read_config_path_from_ros_parameter() -> str:

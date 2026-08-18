@@ -1,24 +1,43 @@
+# code-tools-zed2i
 
-# Template
+Reusable ZED2i software integration package for ROS 2 and future robotics
+mapping projects within the NERo ecosystem.
 
-This repository provides a standardized template for robotics projects, ensuring consistency and best practices across all areas (mechanical, electronics, firmware, and software).
+This repository follows the NERo robotics project template and is organized into:
 
-## 📚 Documentation
+- `CAD/`
+- `electronics/`
+- `firmware/`
+- `software/`
 
-- See [RULES.md](RULES.md) for project organization rules, naming conventions, and best practices.
-- Each main folder contains a `.md` file with a description and example files:
-	- [CAD/CAD.md](CAD/CAD.md): Mechanical design files
-	- [eletronics/eletronics.md](eletronics/eletronics.md): Electronic schematics and PCB layouts
-	- [firmware/firmware.md](firmware/firmware.md): Embedded code and configuration
-	- [software/software.md](software/software.md): Applications and scripts
+The current active development scope is located in:
 
-## 🏁 Getting Started
+```text
+software/
+```
 
-1. Clone this repository.
-2. Choose the appropriate naming convention for your project (see RULES.md).
-3. Organize your files in the corresponding folders.
-4. Follow the commit and contribution guidelines.
+The `software/` folder contains the ROS 2 Python package:
 
----
+```text
+tools_zed2i
+```
 
-> For more details, refer to the documentation files in each folder and the main RULES.md.
+## Current Capabilities
+
+* ROS 2 Humble support
+* YAML-based configuration
+* Configurable stream presets
+* ZED2i stream relay
+* Topic health diagnostics
+* Structured ROS diagnostics
+* Internal sensor snapshot API
+
+## Documentation
+
+See:
+
+```text
+software/README.md
+```
+
+for build, usage, configuration, testing, and validation instructions.
