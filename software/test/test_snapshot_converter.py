@@ -22,10 +22,16 @@ class FakePointCloudConverter:
         return f"converted_xyz:{pointcloud_message}"
 
 
+class FakeOpen3DConverter:
+    def pointcloud_message_to_open3d(self, pointcloud_message: Any) -> str:
+        return f"converted_open3d:{pointcloud_message}"
+
+
 def test_snapshot_converter_returns_empty_snapshot_when_no_images_are_available() -> None:
     converter = SnapshotConverter(
         image_converter=FakeImageConverter(),
         pointcloud_converter=FakePointCloudConverter(),
+        open3d_converter=FakeOpen3DConverter(),
     )
 
     converted_snapshot = converter.convert_images_to_bgr(SensorSnapshot())
@@ -40,6 +46,7 @@ def test_snapshot_converter_converts_available_image_streams() -> None:
     converter = SnapshotConverter(
         image_converter=FakeImageConverter(),
         pointcloud_converter=FakePointCloudConverter(),
+        open3d_converter=FakeOpen3DConverter(),
     )
 
     snapshot = SensorSnapshot(
@@ -60,6 +67,7 @@ def test_snapshot_converter_ignores_missing_streams() -> None:
     converter = SnapshotConverter(
         image_converter=FakeImageConverter(),
         pointcloud_converter=FakePointCloudConverter(),
+        open3d_converter=FakeOpen3DConverter(),
     )
 
     snapshot = SensorSnapshot(left_image="left_message")
@@ -75,6 +83,7 @@ def test_snapshot_converter_converts_point_cloud_stream() -> None:
     converter = SnapshotConverter(
         image_converter=FakeImageConverter(),
         pointcloud_converter=FakePointCloudConverter(),
+        open3d_converter=FakeOpen3DConverter(),
     )
 
     snapshot = SensorSnapshot(point_cloud="point_cloud_message")
@@ -89,6 +98,7 @@ def test_snapshot_converter_converts_all_available_streams() -> None:
     converter = SnapshotConverter(
         image_converter=FakeImageConverter(),
         pointcloud_converter=FakePointCloudConverter(),
+        open3d_converter=FakeOpen3DConverter(),
     )
 
     snapshot = SensorSnapshot(
@@ -98,9 +108,28 @@ def test_snapshot_converter_converts_all_available_streams() -> None:
         point_cloud="point_cloud_message",
     )
 
-    converted_snapshot = converter.convert_all_available(snapshot)
+    converted_snapshot = converter.convert_all_available(
+        snapshot,
+        include_open3d=True,
+    )
 
     assert converted_snapshot.left_image == "converted_left:left_message"
     assert converted_snapshot.right_image == "converted_right:right_message"
     assert converted_snapshot.disparity == "converted_disparity:disparity_message"
     assert converted_snapshot.point_cloud_xyz == "converted_xyz:point_cloud_message"
+    assert converted_snapshot.point_cloud_open3d == "converted_open3d:point_cloud_message"
+
+
+def test_snapshot_converter_does_not_convert_open3d_by_default() -> None:
+    converter = SnapshotConverter(
+        image_converter=FakeImageConverter(),
+        pointcloud_converter=FakePointCloudConverter(),
+        open3d_converter=FakeOpen3DConverter(),
+    )
+
+    snapshot = SensorSnapshot(point_cloud="point_cloud_message")
+
+    converted_snapshot = converter.convert_all_available(snapshot)
+
+    assert converted_snapshot.point_cloud_xyz == "converted_xyz:point_cloud_message"
+    assert converted_snapshot.point_cloud_open3d is None
