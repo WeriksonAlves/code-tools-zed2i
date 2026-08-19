@@ -173,6 +173,35 @@ active_preset: "mapping"
 
 ---
 
+### Optional Open3D Environment
+
+For Open3D-based processing, it is recommended to use a virtual environment
+with access to system ROS 2 packages:
+
+```bash
+cd ~/ufv/GitHub/code-tools-zed2i
+
+python3 -m venv .venv --system-site-packages
+source .venv/bin/activate
+export PYTHONNOUSERSITE=1
+
+python3 -m pip install -r software/requirements-open3d.txt
+```
+
+Recommended activation order:
+```bash
+cd ~/ufv/GitHub/code-tools-zed2i/software
+
+source /opt/ros/humble/setup.bash
+source ../.venv/bin/activate
+export PYTHONNOUSERSITE=1
+source install/setup.bash
+```
+
+The file `requirements-open3d.txt` pins compatible versions of NumPy, SciPy, scikit-learn, setuptools, and Open3D to avoid conflicts with ROS 2 Humble and `colcon-core`.
+
+---
+
 ## Run Without Active ZED Streams
 
 This test validates whether the node loads the YAML file and creates the
@@ -363,6 +392,46 @@ Required system packages:
 
 ```bash
 sudo apt install python3-opencv ros-humble-cv-bridge
+```
+
+---
+
+## Open3D Conversion Utilities
+
+The package provides optional Open3D conversion utilities for point cloud
+processing.
+
+Open3D is treated as an optional dependency. The base package can be imported
+and used without Open3D installed.
+
+Supported conversions:
+
+```text
+numpy.ndarray Nx3 -> open3d.geometry.PointCloud
+sensor_msgs/msg/PointCloud2 -> open3d.geometry.PointCloud
+```
+
+Install optional dependency:
+```python
+python3 -m pip install open3d
+```
+
+Example:
+```python
+from tools_zed2i.infrastructure.converters.open3d_converter import Open3DConverter
+
+converter = Open3DConverter()
+open3d_cloud = converter.xyz_array_to_open3d(xyz_points)
+```
+
+Snapshot conversion example:
+```python
+converted_snapshot = snapshot_converter.convert_all_available(
+    snapshot,
+    include_open3d=True,
+)
+
+open3d_cloud = converted_snapshot.point_cloud_open3d
 ```
 
 ---
