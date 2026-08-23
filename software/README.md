@@ -531,6 +531,57 @@ terrain mapping, planar segmentation, and future temporal tracking routines.
 
 ---
 
+## Dataset Recording API
+
+The package provides a simple dataset recording API for saving available sensor
+snapshot streams to disk.
+
+Supported outputs:
+
+```text
+left image    -> PNG
+right image   -> PNG
+disparity     -> NPY
+point cloud   -> NPY
+metadata      -> JSON
+```
+
+Default layout:
+
+```text
+dataset_root/
+└── sequence_name/
+    ├── images/
+    │   ├── left/
+    │   └── right/
+    ├── disparity/
+    ├── pointclouds/
+    └── metadata/
+```
+
+Example:
+
+```python
+from pathlib import Path
+
+from tools_zed2i.application.dataset.dataset_config import DatasetRecordingConfig
+from tools_zed2i.application.dataset.snapshot_recorder import SnapshotDatasetRecorder
+
+config = DatasetRecordingConfig(
+    dataset_root=Path("datasets"),
+    sequence_name="sequence_test",
+)
+
+recorder = SnapshotDatasetRecorder(config=config)
+
+saved_paths = recorder.record_snapshot(snapshot)
+```
+
+The first version records the available data in a `SensorSnapshot`. It does not
+perform temporal synchronization across topics yet.
+
+---
+
 ## Tests
 
 Run from the `software/` directory:
