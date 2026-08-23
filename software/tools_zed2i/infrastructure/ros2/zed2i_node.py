@@ -33,8 +33,9 @@ MESSAGE_TYPES: dict[str, type] = {
 class Zed2iRosNode(Node, Zed2iFrameReader):
     """ROS 2 adapter node for ZED2i sensor streams."""
 
-    def __init__(self, config_path: str | Path) -> None:
-        self._config = Zed2iConfig.from_yaml(config_path)
+    def __init__(self, config_path: str | Path | None = None) -> None:
+        resolved_config_path = config_path or _read_config_path_from_ros_parameter()
+        self._config = Zed2iConfig.from_yaml(resolved_config_path)
 
         super().__init__(self._config.node_name)
 

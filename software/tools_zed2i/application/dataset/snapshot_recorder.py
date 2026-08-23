@@ -135,7 +135,7 @@ class SnapshotDatasetRecorder:
 
         metadata = {
             "sample_id": sample_id,
-            "recorded_at": datetime.now(timezone.utc),
+            "recorded_at": datetime.now(timezone.utc).isoformat(),
             "available_streams": snapshot.available_streams(),
             "saved_files": {
                 "left_image": self._path_to_string(saved_paths.left_image_path),

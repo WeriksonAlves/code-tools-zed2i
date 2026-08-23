@@ -582,6 +582,48 @@ perform temporal synchronization across topics yet.
 
 ---
 
+## Dataset Recorder ROS 2 Node
+
+The package provides a ROS 2 node for periodically recording available ZED2i
+sensor snapshots to disk.
+
+Executable:
+
+```text
+zed2i_dataset_recorder_node
+```
+
+Example:
+
+```bash
+cd ~/ufv/GitHub/code-tools-zed2i/software
+
+source /opt/ros/humble/setup.bash
+source ../.venv/bin/activate
+export PYTHONNOUSERSITE=1
+source install/setup.bash
+
+ros2 run tools_zed2i zed2i_dataset_recorder_node --ros-args \
+  -p config_path:=$(pwd)/config/zed2i.yaml \
+  -p dataset_root:=$(pwd)/datasets \
+  -p sequence_name:=test_sequence \
+  -p recording_period_sec:=1.0
+```
+
+The node internally runs the ZED2i stream reader and periodically records the
+latest available `SensorSnapshot`.
+
+Initial behavior:
+
+```text
+ZED2i streams -> SensorSnapshot -> DatasetRecordingAPI -> dataset folder
+```
+
+This first node version records periodically. It does not yet provide start/stop
+services.
+
+---
+
 ## Tests
 
 Run from the `software/` directory:

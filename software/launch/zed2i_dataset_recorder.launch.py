@@ -1,0 +1,52 @@
+from __future__ import annotations
+
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
+
+
+def generate_launch_description() -> LaunchDescription:
+    config_path = LaunchConfiguration("config_path")
+    dataset_root = LaunchConfiguration("dataset_root")
+    sequence_name = LaunchConfiguration("sequence_name")
+    recording_period_sec = LaunchConfiguration("recording_period_sec")
+
+    return LaunchDescription(
+        [
+            DeclareLaunchArgument(
+                "config_path",
+                default_value="config/zed2i.yaml",
+                description="Path to the tools_zed2i YAML configuration file.",
+            ),
+            DeclareLaunchArgument(
+                "dataset_root",
+                default_value="datasets",
+                description="Root directory for recorded datasets.",
+            ),
+            DeclareLaunchArgument(
+                "sequence_name",
+                default_value="zed2i_sequence",
+                description="Dataset sequence name.",
+            ),
+            DeclareLaunchArgument(
+                "recording_period_sec",
+                default_value="1.0",
+                description="Recording period in seconds.",
+            ),
+            Node(
+                package="tools_zed2i",
+                executable="zed2i_dataset_recorder_node",
+                name="tools_zed2i_dataset_recorder_node",
+                output="screen",
+                parameters=[
+                    {
+                        "config_path": config_path,
+                        "dataset_root": dataset_root,
+                        "sequence_name": sequence_name,
+                        "recording_period_sec": recording_period_sec,
+                    }
+                ],
+            ),
+        ]
+    )
