@@ -1,4 +1,5 @@
 from setuptools import find_packages, setup
+import os
 from glob import glob
 from os.path import join
 
@@ -9,10 +10,16 @@ setup(
     version="0.1.0",
     packages=find_packages(exclude=["tests"]),
     data_files=[
-        ("share/ament_index/resource_index/packages", [f"resource/{package_name}"]),
-        (f"share/{package_name}", ["package.xml"]),
-        (join("share", package_name, "config"), glob("config/*.yaml")),
-        (join("share", package_name, "launch"), glob("launch/*.py")),
+        ("share/ament_index/resource_index/packages", ["resource/" + package_name]),
+        ("share/" + package_name, ["package.xml"]),
+        (
+            os.path.join("share", package_name, "launch"),
+            glob("launch/*.launch.py"),
+        ),
+        (
+            os.path.join("share", package_name, "config"),
+            glob("config/*.yaml"),
+        ),
     ],
     install_requires=[
         "setuptools",
@@ -27,6 +34,7 @@ setup(
     entry_points={
         "console_scripts": [
             "zed2i_node = tools_zed2i.infrastructure.ros2.zed2i_node:main",
+            "zed2i_dataset_recorder_node = tools_zed2i.infrastructure.ros2.dataset_recorder_node:main",
         ],
     },
 )

@@ -59,8 +59,15 @@ class DatasetFileWriter:
         try:
             path.parent.mkdir(parents=True, exist_ok=True)
             with path.open("w", encoding="utf-8") as file:
-                json.dump(metadata, file, indent=2, ensure_ascii=False)
+                json.dump(
+                    metadata,
+                    file,
+                    indent=2,
+                    ensure_ascii=False,
+                    default=str,
+                )
         except Exception as exception:
             raise DatasetWriterError(
                 f"Failed to save metadata to {path}: {exception}"
             ) from exception
+

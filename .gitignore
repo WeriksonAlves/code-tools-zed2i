@@ -54,3 +54,7 @@ Thumbs.db
 # ROS and ROS2
 .bag
 .mcap
+
+# Generated datasets
+software/datasets/
+datasets/
