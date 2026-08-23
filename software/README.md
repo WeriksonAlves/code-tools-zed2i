@@ -436,6 +436,50 @@ open3d_cloud = converted_snapshot.point_cloud_open3d
 
 ---
 
+## Point Cloud Processing Utilities
+
+The package provides basic Open3D-based point cloud processing utilities.
+
+Available operations:
+
+```text
+voxel downsampling
+statistical outlier removal
+radius outlier removal
+plane segmentation with RANSAC
+basic preprocessing for mapping
+```
+
+Example:
+
+```python
+from tools_zed2i.application.pointcloud_processor import Open3DPointCloudProcessor
+
+processor = Open3DPointCloudProcessor()
+
+filtered_cloud = processor.preprocess_for_mapping(
+    point_cloud=open3d_cloud,
+    voxel_size=0.05,
+    nb_neighbors=30,
+    std_ratio=2.0,
+)
+
+plane_result = processor.segment_plane(
+    filtered_cloud,
+    distance_threshold=0.05,
+    ransac_n=3,
+    num_iterations=1000,
+)
+
+ground_plane = plane_result.inlier_cloud
+remaining_cloud = plane_result.outlier_cloud
+```
+
+These utilities are intended for experimental 3D mapping pipelines and should
+be tuned according to sensor resolution, scene scale, and terrain structure.
+
+---
+
 ## Tests
 
 Run from the `software/` directory:
