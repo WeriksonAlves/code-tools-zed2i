@@ -480,6 +480,57 @@ be tuned according to sensor resolution, scene scale, and terrain structure.
 
 ---
 
+## Mapping Preprocessing Pipeline
+
+The package provides a reusable preprocessing pipeline for 3D mapping
+experiments.
+
+The pipeline combines:
+
+```text
+SensorSnapshot
+PointCloud2 conversion
+Open3D point cloud conversion
+voxel downsampling
+statistical outlier removal
+optional RANSAC plane segmentation
+```
+
+Example:
+
+```python
+from tools_zed2i.application.mapping_pipeline import (
+    MappingPreprocessingConfig,
+    MappingPreprocessingPipeline,
+)
+
+pipeline = MappingPreprocessingPipeline()
+
+result = pipeline.run_from_snapshot(
+    snapshot=snapshot,
+    config=MappingPreprocessingConfig(
+        voxel_size=0.05,
+        nb_neighbors=30,
+        std_ratio=2.0,
+        enable_plane_segmentation=True,
+        plane_distance_threshold=0.05,
+        plane_ransac_n=3,
+        plane_num_iterations=1000,
+    ),
+)
+
+preprocessed_cloud = result.preprocessed_cloud
+
+if result.has_plane_segmentation():
+    ground_candidate = result.plane_segmentation.inlier_cloud
+    remaining_cloud = result.plane_segmentation.outlier_cloud
+```
+
+This pipeline is intended as a lightweight experimental entry point for
+terrain mapping, planar segmentation, and future temporal tracking routines.
+
+---
+
 ## Tests
 
 Run from the `software/` directory:
