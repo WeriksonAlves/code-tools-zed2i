@@ -4,6 +4,7 @@ from pathlib import Path
 
 import rclpy
 from rclpy.node import Node
+from std_srvs.srv import Trigger
 
 from tools_zed2i.application.dataset.dataset_config import DatasetRecordingConfig
 from tools_zed2i.application.dataset.snapshot_recorder import (
@@ -28,6 +29,7 @@ class Zed2iDatasetRecorderNode(Node):
         self.declare_parameter("save_disparity", True)
         self.declare_parameter("save_point_cloud", True)
         self.declare_parameter("save_metadata", True)
+        self.declare_parameter("recording_enabled", True)
 
         dataset_root = Path(
             self.get_parameter("dataset_root").get_parameter_value().string_value
@@ -39,6 +41,10 @@ class Zed2iDatasetRecorderNode(Node):
             self.get_parameter("recording_period_sec")
             .get_parameter_value()
             .double_value
+        )
+
+        self._recording_enabled = (
+            self.get_parameter("recording_enabled").get_parameter_value().bool_value
         )
 
         config = DatasetRecordingConfig(
@@ -79,11 +85,30 @@ class Zed2iDatasetRecorderNode(Node):
             self._record_latest_snapshot,
         )
 
+        service_prefix = self.get_fully_qualified_name()
+
+        self._start_recording_service = self.create_service(
+            Trigger,
+            f"{service_prefix}/start_recording",
+            self._handle_start_recording,
+        )
+        self._stop_recording_service = self.create_service(
+            Trigger,
+            f"{service_prefix}/stop_recording",
+            self._handle_stop_recording,
+        )
+        self._record_once_service = self.create_service(
+            Trigger,
+            f"{service_prefix}/record_once",
+            self._handle_record_once,
+        )
+
         self.get_logger().info(
             "Dataset recorder node started. "
             f"dataset_root={dataset_root}, "
             f"sequence_name={sequence_name}, "
-            f"recording_period_sec={recording_period_sec}"
+            f"recording_period_sec={recording_period_sec}, "
+            f"recording_enabled={self._recording_enabled}"
         )
 
     def update_snapshot(self, snapshot: SensorSnapshot) -> None:
@@ -91,28 +116,91 @@ class Zed2iDatasetRecorderNode(Node):
         self._latest_snapshot = snapshot
 
     def _record_latest_snapshot(self) -> None:
-        if self._latest_snapshot is None:
-            self.get_logger().warn("No snapshot available to record yet.")
+        if not self._recording_enabled:
             return
 
+        success, message = self._record_snapshot_if_available()
+
+        if success:
+            self.get_logger().info(message)
+        else:
+            self.get_logger().warn(message)
+
+    def _record_snapshot_if_available(self) -> tuple[bool, str]:
+        if self._latest_snapshot is None:
+            return False, "No snapshot available to record yet."
+
         if not self._latest_snapshot.available_streams():
-            self.get_logger().warn(
-                "Snapshot is available, but no streams have been received yet."
+            return (
+                False,
+                "Snapshot is available, but no streams have been received yet.",
             )
-            return
 
         try:
             saved_paths = self._recorder.record_snapshot(self._latest_snapshot)
-            self.get_logger().info(
-                "Recorded snapshot: "
-                f"left={saved_paths.left_image_path}, "
-                f"right={saved_paths.right_image_path}, "
-                f"disparity={saved_paths.disparity_path}, "
-                f"point_cloud={saved_paths.point_cloud_path}, "
-                f"metadata={saved_paths.metadata_path}"
+
+            return (
+                True,
+                (
+                    "Recorded snapshot: "
+                    f"left={saved_paths.left_image_path}, "
+                    f"right={saved_paths.right_image_path}, "
+                    f"disparity={saved_paths.disparity_path}, "
+                    f"point_cloud={saved_paths.point_cloud_path}, "
+                    f"metadata={saved_paths.metadata_path}"
+                ),
             )
         except SnapshotRecorderError as exception:
-            self.get_logger().error(str(exception))
+            return False, str(exception)
+
+    def _handle_start_recording(
+        self,
+        request: Trigger.Request,
+        response: Trigger.Response,
+    ) -> Trigger.Response:
+        del request
+
+        self._recording_enabled = True
+        response.success = True
+        response.message = "Dataset recording started."
+
+        self.get_logger().info(response.message)
+
+        return response
+
+    def _handle_stop_recording(
+        self,
+        request: Trigger.Request,
+        response: Trigger.Response,
+    ) -> Trigger.Response:
+        del request
+
+        self._recording_enabled = False
+        response.success = True
+        response.message = "Dataset recording stopped."
+
+        self.get_logger().info(response.message)
+
+        return response
+
+    def _handle_record_once(
+        self,
+        request: Trigger.Request,
+        response: Trigger.Response,
+    ) -> Trigger.Response:
+        del request
+
+        success, message = self._record_snapshot_if_available()
+
+        response.success = success
+        response.message = message
+
+        if success:
+            self.get_logger().info(message)
+        else:
+            self.get_logger().warn(message)
+
+        return response
 
 
 def main() -> None:

@@ -624,6 +624,63 @@ services.
 
 ---
 
+### Dataset Recorder Services
+
+The dataset recorder node provides ROS 2 services for controlling recording at
+runtime.
+
+Available services:
+
+```text
+/tools_zed2i_dataset_recorder_node/start_recording
+/tools_zed2i_dataset_recorder_node/stop_recording
+/tools_zed2i_dataset_recorder_node/record_once
+```
+
+Service type:
+
+```text
+std_srvs/srv/Trigger
+```
+
+Start periodic recording:
+
+```bash
+ros2 service call \
+  /tools_zed2i_dataset_recorder_node/start_recording \
+  std_srvs/srv/Trigger
+```
+
+Stop periodic recording:
+
+```bash
+ros2 service call \
+  /tools_zed2i_dataset_recorder_node/stop_recording \
+  std_srvs/srv/Trigger
+```
+
+Record a single snapshot:
+
+```bash
+ros2 service call \
+  /tools_zed2i_dataset_recorder_node/record_once \
+  std_srvs/srv/Trigger
+```
+
+To start the node with periodic recording disabled:
+
+```bash
+ros2 run tools_zed2i zed2i_dataset_recorder_node --ros-args \
+  -p config_path:=$(pwd)/config/zed2i.yaml \
+  -p dataset_root:=$(pwd)/datasets \
+  -p sequence_name:=manual_recording_test \
+  -p recording_period_sec:=1.0 \
+  -p recording_enabled:=false
+```
+
+
+---
+
 ## Tests
 
 Run from the `software/` directory:
