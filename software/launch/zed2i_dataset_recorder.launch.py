@@ -11,6 +11,7 @@ def generate_launch_description() -> LaunchDescription:
     dataset_root = LaunchConfiguration("dataset_root")
     sequence_name = LaunchConfiguration("sequence_name")
     recording_period_sec = LaunchConfiguration("recording_period_sec")
+    recording_enabled = LaunchConfiguration("recording_enabled")
 
     return LaunchDescription(
         [
@@ -34,6 +35,11 @@ def generate_launch_description() -> LaunchDescription:
                 default_value="1.0",
                 description="Recording period in seconds.",
             ),
+            DeclareLaunchArgument(
+                "recording_enabled",
+                default_value="true",
+                description="Whether periodic dataset recording starts enabled.",
+            ),
             Node(
                 package="tools_zed2i",
                 executable="zed2i_dataset_recorder_node",
@@ -45,6 +51,7 @@ def generate_launch_description() -> LaunchDescription:
                         "dataset_root": dataset_root,
                         "sequence_name": sequence_name,
                         "recording_period_sec": recording_period_sec,
+                        "recording_enabled": recording_enabled,
                     }
                 ],
             ),
