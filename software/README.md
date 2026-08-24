@@ -678,7 +678,6 @@ ros2 run tools_zed2i zed2i_dataset_recorder_node --ros-args \
   -p recording_enabled:=false
 ```
 
-
 ---
 
 ## Tests
@@ -703,6 +702,55 @@ All checks passed
 ```
 
 and all unit tests passing.
+
+---
+
+## Dataset Inspection Tools
+
+The package provides a command-line tool for inspecting datasets recorded with
+the ZED2i dataset recorder.
+
+Executable:
+
+```text
+inspect_zed2i_dataset
+```
+
+Example:
+
+```bash
+inspect_zed2i_dataset datasets/zed2i_real_service_test
+```
+
+Generated reports:
+
+```text
+datasets/zed2i_real_service_test/inspection/inspection_summary.json
+datasets/zed2i_real_service_test/inspection/inspection_report.md
+```
+
+The inspection tool checks:
+
+```text
+sample count
+missing files
+left/right image shape
+disparity shape
+point cloud shape
+point count
+metadata validity
+```
+
+Example output:
+
+```text
+Dataset path: datasets/zed2i_real_service_test
+Total samples: 18
+Complete samples: 18
+Incomplete samples: 0
+Total point count: ...
+Average point count: ...
+```
 
 ---
 

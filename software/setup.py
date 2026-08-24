@@ -35,6 +35,7 @@ setup(
         "console_scripts": [
             "zed2i_node = tools_zed2i.infrastructure.ros2.zed2i_node:main",
             "zed2i_dataset_recorder_node = tools_zed2i.infrastructure.ros2.dataset_recorder_node:main",
+            "inspect_zed2i_dataset = tools_zed2i.scripts.inspect_dataset:main",
         ],
     },
 )
