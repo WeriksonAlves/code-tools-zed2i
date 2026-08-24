@@ -50,6 +50,21 @@ class FakeDatasetFileWriter:
         self.saved_metadata.append(path)
 
 
+class FakeDatasetManifestWriter:
+    def __init__(self) -> None:
+        self.saved_manifest_count = 0
+
+    def create_from_recording_config(self, config: object) -> object:
+        return object()
+
+    def save(self, manifest: object, output_path: object | None = None) -> Path:
+        del manifest
+        del output_path
+
+        self.saved_manifest_count += 1
+        return Path("manifest.json")
+
+
 def test_snapshot_dataset_recorder_creates_dataset_layout(tmp_path: Path) -> None:
     config = DatasetRecordingConfig(
         dataset_root=tmp_path,
@@ -60,6 +75,7 @@ def test_snapshot_dataset_recorder_creates_dataset_layout(tmp_path: Path) -> Non
         config=config,
         snapshot_converter=FakeSnapshotConverter(),
         file_writer=FakeDatasetFileWriter(),
+        manifest_writer=FakeDatasetManifestWriter(),
     )
 
     assert recorder.layout.sequence_path.exists()
@@ -82,6 +98,7 @@ def test_snapshot_dataset_recorder_saves_available_streams(tmp_path: Path) -> No
         config=config,
         snapshot_converter=FakeSnapshotConverter(),
         file_writer=writer,
+        manifest_writer=FakeDatasetManifestWriter(),
     )
 
     snapshot = SensorSnapshot(
@@ -131,6 +148,7 @@ def test_snapshot_dataset_recorder_respects_disabled_streams(tmp_path: Path) -> 
         config=config,
         snapshot_converter=FakeSnapshotConverter(),
         file_writer=writer,
+        manifest_writer=FakeDatasetManifestWriter(),
     )
 
     snapshot = SensorSnapshot(
@@ -170,6 +188,7 @@ def test_snapshot_dataset_recorder_auto_increments_sample_id(tmp_path: Path) -> 
         config=config,
         snapshot_converter=FakeSnapshotConverter(),
         file_writer=writer,
+        manifest_writer=FakeDatasetManifestWriter(),
     )
 
     snapshot = SensorSnapshot(left_image="left")
@@ -192,3 +211,21 @@ def test_saved_snapshot_paths_can_be_empty() -> None:
     assert saved_paths.disparity_path is None
     assert saved_paths.point_cloud_path is None
     assert saved_paths.metadata_path is None
+
+
+def test_snapshot_dataset_recorder_creates_manifest(tmp_path: Path) -> None:
+    manifest_writer = FakeDatasetManifestWriter()
+
+    config = DatasetRecordingConfig(
+        dataset_root=tmp_path,
+        sequence_name="sequence_test",
+    )
+
+    SnapshotDatasetRecorder(
+        config=config,
+        snapshot_converter=FakeSnapshotConverter(),
+        file_writer=FakeDatasetFileWriter(),
+        manifest_writer=manifest_writer,
+    )
+
+    assert manifest_writer.saved_manifest_count == 1

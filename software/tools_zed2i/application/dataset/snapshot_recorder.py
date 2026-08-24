@@ -6,6 +6,7 @@ from typing import Any
 
 from tools_zed2i.application.dataset.dataset_config import DatasetRecordingConfig
 from tools_zed2i.application.dataset.dataset_layout import DatasetLayout
+from tools_zed2i.application.dataset.dataset_manifest import DatasetManifestWriter
 from tools_zed2i.application.dataset.dataset_writer import (
     DatasetFileWriter,
     SavedSnapshotPaths,
@@ -26,14 +27,21 @@ class SnapshotDatasetRecorder:
         config: DatasetRecordingConfig,
         snapshot_converter: SnapshotConverter | None = None,
         file_writer: DatasetFileWriter | None = None,
+        manifest_writer: DatasetManifestWriter | None = None,
     ) -> None:
         self._config = config
         self._layout = DatasetLayout.from_config(config)
         self._snapshot_converter = snapshot_converter or SnapshotConverter()
         self._file_writer = file_writer or DatasetFileWriter()
+        self._manifest_writer = manifest_writer or DatasetManifestWriter()
         self._sample_index = 0
 
         self._layout.create_directories()
+        self._create_manifest()
+
+    def _create_manifest(self) -> None:
+        manifest = self._manifest_writer.create_from_recording_config(self._config)
+        self._manifest_writer.save(manifest)
 
     @property
     def layout(self) -> DatasetLayout:

@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from tools_zed2i.application.dataset.dataset_manifest import DatasetManifestWriter
 from tools_zed2i.application.dataset.inspection.dataset_inspector import (
     DatasetInspector,
 )
@@ -30,6 +31,31 @@ def parse_arguments() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def _update_manifest_if_available(dataset_path: Path, summary: object) -> None:
+    manifest_path = dataset_path / "manifest.json"
+
+    if not manifest_path.exists():
+        return
+
+    manifest_writer = DatasetManifestWriter()
+    manifest = manifest_writer.load(manifest_path)
+
+    inspection_summary = {
+        "total_samples": summary.total_samples,
+        "complete_samples": summary.complete_samples,
+        "incomplete_samples": summary.incomplete_samples,
+        "total_point_count": summary.total_point_count,
+        "average_point_count": summary.average_point_count,
+    }
+
+    updated_manifest = manifest_writer.attach_inspection_summary(
+        manifest=manifest,
+        inspection_summary=inspection_summary,
+    )
+
+    manifest_writer.save(updated_manifest, manifest_path)
+
+
 def main() -> None:
     """Run dataset inspection from the command line."""
     arguments = parse_arguments()
@@ -47,6 +73,8 @@ def main() -> None:
 
     report_writer.save_json(summary=summary, output_path=json_report_path)
     report_writer.save_markdown(summary=summary, output_path=markdown_report_path)
+
+    _update_manifest_if_available(dataset_path=dataset_path, summary=summary)
 
     print(f"Dataset path: {summary.dataset_path}")
     print(f"Total samples: {summary.total_samples}")

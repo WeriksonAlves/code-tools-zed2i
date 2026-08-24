@@ -754,6 +754,39 @@ Average point count: ...
 
 ---
 
+## Dataset Manifest
+
+Recorded datasets include a `manifest.json` file at the sequence root.
+
+Example:
+
+```text
+dataset_root/
+└── sequence_name/
+    ├── manifest.json
+    ├── images/
+    ├── disparity/
+    ├── pointclouds/
+    ├── metadata/
+    └── inspection/
+```
+
+The manifest stores:
+
+manifest version
+sequence name
+creation timestamp
+recording configuration
+enabled streams
+expected dataset layout
+inspection summary, when available
+
+When inspect_zed2i_dataset is executed, the manifest is updated with a compact
+inspection summary if manifest.json exists.
+
+
+---
+
 ## Current Validation Summary
 
 The package has been validated with a real ZED2i camera and the ZED ROS 2 wrapper.
