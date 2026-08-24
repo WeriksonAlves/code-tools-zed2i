@@ -787,6 +787,46 @@ inspection summary if manifest.json exists.
 
 ---
 
+## Dataset Export Tools
+
+The package provides a command-line tool for exporting consolidated dataset
+metadata and reports.
+
+Executable:
+
+```text
+export_zed2i_dataset
+```
+
+Example:
+```
+ros2 run tools_zed2i export_zed2i_dataset datasets/zed2i_sequence
+```
+
+Generated files:
+```
+datasets/zed2i_sequence/exports/
+├── samples.csv
+├── summary.json
+├── summary.md
+└── manifest_snapshot.json
+```
+
+The export tool consolidates:
+```
+sample IDs
+sample completeness
+image shapes
+disparity shapes
+point cloud shapes
+point counts
+missing files
+inspection errors
+manifest snapshot, when available
+```
+
+---
+
 ## Current Validation Summary
 
 The package has been validated with a real ZED2i camera and the ZED ROS 2 wrapper.
