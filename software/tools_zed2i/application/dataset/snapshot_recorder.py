@@ -7,12 +7,12 @@ from typing import Any
 from tools_zed2i.application.dataset.dataset_config import DatasetRecordingConfig
 from tools_zed2i.application.dataset.dataset_layout import DatasetLayout
 from tools_zed2i.application.dataset.dataset_manifest import DatasetManifestWriter
-from tools_zed2i.application.dataset.dataset_writer import (
+from tools_zed2i.application.snapshot_converter import SnapshotConverter
+from tools_zed2i.domain.snapshot import SensorSnapshot
+from tools_zed2i.infrastructure.dataset.file_dataset_writer import (
     DatasetFileWriter,
     SavedSnapshotPaths,
 )
-from tools_zed2i.application.snapshot_converter import SnapshotConverter
-from tools_zed2i.domain.snapshot import SensorSnapshot
 
 
 class SnapshotRecorderError(RuntimeError):
