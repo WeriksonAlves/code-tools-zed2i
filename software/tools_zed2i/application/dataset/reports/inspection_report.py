@@ -1,3 +1,5 @@
+"""Markdown and JSON report generation for dataset inspection results."""
+
 from __future__ import annotations
 
 import json
@@ -5,17 +7,28 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
-from tools_zed2i.application.dataset.inspection.inspection_result import (
+from tools_zed2i.application.dataset.models.inspection_result import (
     DatasetInspectionSummary,
     DatasetSampleInspection,
 )
 
 
 class DatasetInspectionReportWriter:
-    """Writer for dataset inspection reports."""
+    """Writer for dataset inspection reports.
 
-    def save_json(self, summary: DatasetInspectionSummary, output_path: Path) -> None:
-        """Save the inspection summary as JSON."""
+    This class converts inspection summaries into human-readable Markdown and
+    JSON files. It is intentionally simple and deterministic to make generated
+    reports easy to compare across experiments.
+    """
+
+    def save_json(self, summary: DatasetInspectionSummary, output_path: Path
+                  ) -> None:
+        """Save the inspection summary as a JSON file.
+
+        Args:
+            summary: Dataset inspection summary.
+            output_path: Destination JSON path.
+        """
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
         with output_path.open("w", encoding="utf-8") as file:
@@ -31,14 +44,26 @@ class DatasetInspectionReportWriter:
         summary: DatasetInspectionSummary,
         output_path: Path,
     ) -> None:
-        """Save the inspection summary as a Markdown report."""
+        """Save the inspection summary as a Markdown report.
+
+        Args:
+            summary: Dataset inspection summary.
+            output_path: Destination Markdown path.
+        """
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
         with output_path.open("w", encoding="utf-8") as file:
             file.write(self.to_markdown(summary))
 
     def to_markdown(self, summary: DatasetInspectionSummary) -> str:
-        """Convert the inspection summary to Markdown."""
+        """Convert an inspection summary to Markdown text.
+
+        Args:
+            summary: Dataset inspection summary.
+
+        Returns:
+            Markdown-formatted report.
+        """
         lines = [
             "# Dataset Inspection Report",
             "",
@@ -54,19 +79,23 @@ class DatasetInspectionReportWriter:
             "",
             "## Samples",
             "",
-            "| Sample | Complete | Left image | Right image | Disparity | Point cloud | Points | Missing | Errors |",
+            "| Sample | Complete | Left image | Right image | Disparity | "
+            "Point cloud | Points | Missing | Errors |",
             "|---|---:|---|---|---|---|---:|---|---|",
         ]
 
-        for sample in summary.samples:
-            lines.append(self._sample_to_markdown_row(sample))
-
+        lines.extend(
+            self._sample_to_markdown_row(sample)
+            for sample in summary.samples
+        )
         lines.append("")
 
         return "\n".join(lines)
 
     def _sample_to_markdown_row(self, sample: DatasetSampleInspection) -> str:
-        missing = ", ".join(sample.missing_files) if sample.missing_files else "-"
+        """Convert a sample inspection result to a Markdown table row."""
+        missing = ...
+        ", ".join(sample.missing_files) if sample.missing_files else "-"
         errors = "; ".join(sample.errors) if sample.errors else "-"
 
         return (
@@ -75,8 +104,8 @@ class DatasetInspectionReportWriter:
             f"| {self._format_shape(sample.left_image_shape)} "
             f"| {self._format_shape(sample.right_image_shape)} "
             f"| {self._format_shape(sample.disparity_shape)} "
-            f"| {self._format_shape(sample.point_cloud_shape)} "
-            f"| {sample.point_count if sample.point_count is not None else '-'} "
+            f"| {self._format_shape(sample.point_cloud_shape)} | "
+            f"{sample.point_count if sample.point_count is not None else '-'} "
             f"| {missing} "
             f"| {errors} |"
         )
@@ -85,6 +114,7 @@ class DatasetInspectionReportWriter:
         self,
         summary: DatasetInspectionSummary,
     ) -> dict[str, Any]:
+        """Return a JSON-serializable dictionary from an inspection summary."""
         serialized_summary = asdict(summary)
         serialized_summary["dataset_path"] = str(summary.dataset_path)
 
@@ -97,6 +127,7 @@ class DatasetInspectionReportWriter:
 
     @staticmethod
     def _format_shape(shape: tuple[int, ...] | None) -> str:
+        """Format an array shape for tabular reports."""
         if shape is None:
             return "-"
 

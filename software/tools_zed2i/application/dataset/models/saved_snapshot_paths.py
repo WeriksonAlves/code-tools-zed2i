@@ -1,21 +1,22 @@
+"""Models describing files generated from recorded sensor snapshots."""
+
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
-
-import cv2
-import numpy as np
-
-
-class DatasetWriterError(RuntimeError):
-    """Raised when a dataset file cannot be written."""
 
 
 @dataclass(frozen=True)
 class SavedSnapshotPaths:
-    """Paths generated for one recorded sensor snapshot."""
+    """Paths generated for one recorded sensor snapshot.
+
+    Attributes:
+        left_image_path: Path to the saved left image, when available.
+        right_image_path: Path to the saved right image, when available.
+        disparity_path: Path to the saved disparity array, when available.
+        point_cloud_path: Path to the saved point cloud array, when available.
+        metadata_path: Path to the saved metadata file, when available.
+    """
 
     left_image_path: Path | None = None
     right_image_path: Path | None = None
@@ -23,51 +24,24 @@ class SavedSnapshotPaths:
     point_cloud_path: Path | None = None
     metadata_path: Path | None = None
 
+    def as_dict(self) -> dict[str, Path | None]:
+        """Return saved paths indexed by logical file type."""
+        return {
+            "left_image_path": self.left_image_path,
+            "right_image_path": self.right_image_path,
+            "disparity_path": self.disparity_path,
+            "point_cloud_path": self.point_cloud_path,
+            "metadata_path": self.metadata_path,
+        }
 
-class DatasetFileWriter:
-    """Low-level writer for dataset files."""
+    def available_paths(self) -> dict[str, Path]:
+        """Return only paths that were generated."""
+        return {
+            name: path
+            for name, path in self.as_dict().items()
+            if path is not None
+        }
 
-    def save_image(self, image: np.ndarray, path: Path) -> None:
-        """Save an image array to disk."""
-        try:
-            path.parent.mkdir(parents=True, exist_ok=True)
-            success = cv2.imwrite(str(path), image)
-
-            if not success:
-                raise DatasetWriterError(f"cv2.imwrite returned False for {path}")
-        except Exception as exception:
-            raise DatasetWriterError(
-                f"Failed to save image to {path}: {exception}"
-            ) from exception
-
-    def save_array(self, array: np.ndarray, path: Path) -> None:
-        """Save a NumPy array to disk."""
-        try:
-            path.parent.mkdir(parents=True, exist_ok=True)
-            np.save(path, array)
-        except Exception as exception:
-            raise DatasetWriterError(
-                f"Failed to save array to {path}: {exception}"
-            ) from exception
-
-    def save_point_cloud_xyz(self, point_cloud_xyz: np.ndarray, path: Path) -> None:
-        """Save an XYZ point cloud as a NumPy array."""
-        self.save_array(point_cloud_xyz, path)
-
-    def save_metadata(self, metadata: dict[str, Any], path: Path) -> None:
-        """Save metadata as a JSON file."""
-        try:
-            path.parent.mkdir(parents=True, exist_ok=True)
-            with path.open("w", encoding="utf-8") as file:
-                json.dump(
-                    metadata,
-                    file,
-                    indent=2,
-                    ensure_ascii=False,
-                    default=str,
-                )
-        except Exception as exception:
-            raise DatasetWriterError(
-                f"Failed to save metadata to {path}: {exception}"
-            ) from exception
-
+    def is_empty(self) -> bool:
+        """Return whether no files were generated for the snapshot."""
+        return not self.available_paths()
