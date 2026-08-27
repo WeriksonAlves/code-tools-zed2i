@@ -4,18 +4,17 @@ This package contains use-case services, conversion orchestration, dataset
 operations, point cloud processing utilities, and mapping preprocessing
 pipelines.
 
-The application layer should coordinate workflows and depend on abstractions
-whenever possible. Concrete adapters for ROS 2, OpenCV, Open3D, file-system I/O,
-and other external technologies should live in the infrastructure layer.
+The application layer coordinates workflows and should delegate concrete
+technology details to infrastructure adapters whenever possible.
 """
 
-from tools_zed2i.application.mapping_pipeline import (
+from tools_zed2i.application.mapping.preprocessing_pipeline import (
     MappingPipelineError,
     MappingPreprocessingConfig,
     MappingPreprocessingPipeline,
     MappingPreprocessingResult,
 )
-from tools_zed2i.application.pointcloud_processor import (
+from tools_zed2i.application.pointcloud.pointcloud_processor import (
     Open3DPointCloudProcessor,
     PlaneSegmentationResult,
     PointCloudProcessingError,

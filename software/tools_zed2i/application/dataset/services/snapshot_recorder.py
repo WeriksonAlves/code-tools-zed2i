@@ -5,12 +5,12 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from pathlib import Path
 
+from tools_zed2i.application.dataset.models import (
+    DatasetLayout,
+    SavedSnapshotPaths,
+)
 from tools_zed2i.application.dataset.models.dataset_config import (
     DatasetRecordingConfig,
-)
-from tools_zed2i.application.dataset.models.dataset_layout import DatasetLayout
-from tools_zed2i.application.dataset.models.saved_snapshot_paths import (
-    SavedSnapshotPaths,
 )
 from tools_zed2i.application.dataset.ports import (
     DatasetManifestRepository,
@@ -21,8 +21,8 @@ from tools_zed2i.application.snapshot_converter import (
     SnapshotConverter,
 )
 from tools_zed2i.domain.snapshot import SensorSnapshot
-from tools_zed2i.infrastructure.dataset.file_dataset_writer import DatasetFileWriter
-from tools_zed2i.infrastructure.dataset.file_manifest_repository import (
+from tools_zed2i.infrastructure.dataset import (
+    DatasetFileWriter,
     DatasetManifestWriter,
 )
 
@@ -92,8 +92,7 @@ class SnapshotDatasetRecorder:
         resolved_sample_id = sample_id or self._make_sample_id()
 
         try:
-            converted_snapshot = ...
-            self._snapshot_converter.convert_all_available(
+            converted_snapshot = self._snapshot_converter.convert_all_available(
                 snapshot=snapshot,
             )
             saved_paths = self._save_converted_snapshot(

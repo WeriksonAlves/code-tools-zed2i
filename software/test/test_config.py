@@ -111,7 +111,8 @@ def test_load_zed2i_config_from_yaml(tmp_path: Path) -> None:
 
 
 def test_load_zed2i_config_with_minimal_preset(tmp_path: Path) -> None:
-    config_path = _write_config(tmp_path, _make_config_data(active_preset="minimal"))
+    config_path = _write_config(
+        tmp_path, _make_config_data(active_preset="minimal"))
 
     config = Zed2iConfig.from_yaml(config_path)
 

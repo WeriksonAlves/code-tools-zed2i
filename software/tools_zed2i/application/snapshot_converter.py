@@ -160,8 +160,7 @@ class SnapshotConverter:
         point_cloud_open3d = None
 
         if snapshot.point_cloud is not None:
-            point_cloud_open3d = ...
-            self._open3d_converter.pointcloud_message_to_open3d(
+            point_cloud_open3d = self._open3d_converter.pointcloud_message_to_open3d(
                 snapshot.point_cloud,
             )
 

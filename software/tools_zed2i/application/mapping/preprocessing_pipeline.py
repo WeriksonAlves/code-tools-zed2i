@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from tools_zed2i.application.pointcloud_processor import (
+from tools_zed2i.application.pointcloud.pointcloud_processor import (
     Open3DPointCloudProcessor,
     PlaneSegmentationResult,
 )
@@ -196,8 +196,7 @@ class MappingPreprocessingPipeline:
         pipeline_config = config or MappingPreprocessingConfig()
 
         try:
-            preprocessed_cloud = ...
-            self._pointcloud_processor.preprocess_for_mapping(
+            preprocessed_cloud = self._pointcloud_processor.preprocess_for_mapping(
                 point_cloud=point_cloud,
                 voxel_size=pipeline_config.voxel_size,
                 nb_neighbors=pipeline_config.nb_neighbors,
@@ -214,8 +213,12 @@ class MappingPreprocessingPipeline:
                 preprocessed_cloud=preprocessed_cloud,
                 plane_segmentation=plane_segmentation,
             )
-        except (RuntimeError, TypeError, ValueError, AttributeError
-                ) as exception:
+        except (
+            RuntimeError,
+            TypeError,
+            ValueError,
+            AttributeError,
+        ) as exception:
             raise MappingPipelineError(
                 f"Failed to run mapping preprocessing pipeline: {exception}"
             ) from exception

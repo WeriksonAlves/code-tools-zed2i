@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 import pytest
 
-from tools_zed2i.application.dataset.inspection.dataset_inspector import (
+from tools_zed2i.application.dataset import (
     DatasetInspectionError,
     DatasetInspector,
 )
@@ -80,7 +80,8 @@ def test_dataset_inspector_detects_missing_files(tmp_path: Path) -> None:
     assert not sample.is_complete()
 
 
-def test_dataset_inspector_raises_for_missing_dataset_path(tmp_path: Path) -> None:
+def test_dataset_inspector_raises_for_missing_dataset_path(tmp_path: Path
+                                                           ) -> None:
     inspector = DatasetInspector()
 
     with pytest.raises(DatasetInspectionError):

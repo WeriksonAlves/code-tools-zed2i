@@ -94,8 +94,7 @@ class DatasetInspectionReportWriter:
 
     def _sample_to_markdown_row(self, sample: DatasetSampleInspection) -> str:
         """Convert a sample inspection result to a Markdown table row."""
-        missing = ...
-        ", ".join(sample.missing_files) if sample.missing_files else "-"
+        missing = ", ".join(sample.missing_files) if sample.missing_files else "-"
         errors = "; ".join(sample.errors) if sample.errors else "-"
 
         return (

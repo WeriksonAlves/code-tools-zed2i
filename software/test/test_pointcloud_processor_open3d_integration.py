@@ -5,7 +5,7 @@ import importlib.util
 import numpy as np
 import pytest
 
-from tools_zed2i.application.pointcloud_processor import (
+from tools_zed2i.application.pointcloud.pointcloud_processor import (
     Open3DPointCloudProcessor,
 )
 

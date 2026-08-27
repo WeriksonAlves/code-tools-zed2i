@@ -5,8 +5,8 @@ from typing import Any
 
 import numpy as np
 
-from tools_zed2i.application.dataset.models.dataset_config import DatasetRecordingConfig
-from tools_zed2i.application.dataset.services.snapshot_recorder import (
+from tools_zed2i.application.dataset import (
+    DatasetRecordingConfig,
     SavedSnapshotPaths,
     SnapshotDatasetRecorder,
 )

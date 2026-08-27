@@ -4,7 +4,7 @@ from typing import Any
 
 import pytest
 
-from tools_zed2i.application.pointcloud_processor import (
+from tools_zed2i.application.pointcloud import (
     Open3DPointCloudProcessor,
     PlaneSegmentationResult,
     PointCloudProcessingError,
