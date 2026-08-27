@@ -30,8 +30,8 @@ from tools_zed2i.application.dataset.reports.inspection_report import (
     DatasetInspectionReportWriter,
 )
 from tools_zed2i.application.dataset.services.dataset_exporter import (
-    DatasetExportError,
     DatasetExporter,
+    DatasetExportError,
 )
 from tools_zed2i.application.dataset.services.dataset_inspector import (
     DatasetInspectionError,

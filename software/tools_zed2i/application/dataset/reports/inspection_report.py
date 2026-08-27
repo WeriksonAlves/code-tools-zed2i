@@ -79,7 +79,7 @@ class DatasetInspectionReportWriter:
             "",
             "## Samples",
             "",
-            "| Sample | Complete | Left image | Right image | Disparity | "
+            "| Sample | Complete | Left image | Right image | Disparity | ",
             "Point cloud | Points | Missing | Errors |",
             "|---|---:|---|---|---|---|---:|---|---|",
         ]

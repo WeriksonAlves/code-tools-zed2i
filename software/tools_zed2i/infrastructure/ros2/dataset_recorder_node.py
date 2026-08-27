@@ -6,8 +6,8 @@ import rclpy
 from rclpy.node import Node
 from std_srvs.srv import Trigger
 
-from tools_zed2i.application.dataset.dataset_config import DatasetRecordingConfig
-from tools_zed2i.application.dataset.snapshot_recorder import (
+from tools_zed2i.application.dataset.models.dataset_config import DatasetRecordingConfig
+from tools_zed2i.application.dataset.services.snapshot_recorder import (
     SnapshotDatasetRecorder,
     SnapshotRecorderError,
 )

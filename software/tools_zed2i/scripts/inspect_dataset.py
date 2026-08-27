@@ -3,12 +3,10 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from tools_zed2i.application.dataset.dataset_manifest import DatasetManifestWriter
-from tools_zed2i.application.dataset.inspection.dataset_inspector import (
-    DatasetInspector,
-)
-from tools_zed2i.application.dataset.inspection.inspection_report import (
+from tools_zed2i.application.dataset.services.dataset_exporter import (
     DatasetInspectionReportWriter,
+    DatasetInspector,
+    DatasetManifestWriter,
 )
 
 

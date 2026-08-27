@@ -1,3 +1,5 @@
+"""Application-level conversion service for ZED2i sensor snapshots."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -15,8 +17,14 @@ from tools_zed2i.infrastructure.converters.pointcloud_converter import (
 
 @dataclass(frozen=True)
 class ConvertedSensorSnapshot:
-    """
-    Converted sensor snapshot with NumPy/OpenCV/Open3D-compatible objects.
+    """Converted sensor snapshot with analysis-ready payloads.
+
+    Attributes:
+        left_image: Left image converted to a NumPy/OpenCV-compatible array.
+        right_image: Right image converted to a NumPy/OpenCV-compatible array.
+        disparity: Disparity image converted to a NumPy array.
+        point_cloud_xyz: Point cloud converted to an XYZ NumPy array.
+        point_cloud_open3d: Point cloud converted to an Open3D object.
     """
 
     left_image: np.ndarray | None = None
@@ -26,17 +34,35 @@ class ConvertedSensorSnapshot:
     point_cloud_open3d: Any | None = None
 
     def is_empty(self) -> bool:
+        """Return whether no converted payload is available."""
+        return not any(
+            [
+                self.left_image is not None,
+                self.right_image is not None,
+                self.disparity is not None,
+                self.point_cloud_xyz is not None,
+                self.point_cloud_open3d is not None,
+            ]
+        )
+
+    def has_images(self) -> bool:
+        """Return whether at least one converted image is available."""
+        return self.left_image is not None or self.right_image is not None
+
+    def has_point_cloud(self) -> bool:
+        """Return whether at least one converted point cloud is available."""
         return (
-            self.left_image is None
-            and self.right_image is None
-            and self.disparity is None
-            and self.point_cloud_xyz is None
-            and self.point_cloud_open3d is None
+            self.point_cloud_xyz is not None
+            or self.point_cloud_open3d is not None
         )
 
 
 class SnapshotConverter:
-    """Application-level converter for selected snapshot streams."""
+    """Application service for converting selected snapshot streams.
+
+    The converter orchestrates infrastructure converters for images, disparity,
+    PointCloud2, and optionally Open3D point clouds.
+    """
 
     def __init__(
         self,
@@ -44,6 +70,13 @@ class SnapshotConverter:
         pointcloud_converter: Any | None = None,
         open3d_converter: Any | None = None,
     ) -> None:
+        """Initialize the snapshot converter.
+
+        Args:
+            image_converter: Converter for image and disparity payloads.
+            pointcloud_converter: Converter for PointCloud2 payloads.
+            open3d_converter: Converter for Open3D point cloud generation.
+        """
         self._image_converter = image_converter or RosImageConverter()
         self._pointcloud_converter = (
             pointcloud_converter or RosPointCloudConverter()
@@ -56,8 +89,14 @@ class SnapshotConverter:
         self,
         snapshot: SensorSnapshot,
     ) -> ConvertedSensorSnapshot:
-        """
-        Convert available image streams in a sensor snapshot to BGR arrays.
+        """Convert available image streams to BGR/disparity arrays.
+
+        Args:
+            snapshot: Source sensor snapshot.
+
+        Returns:
+            Converted snapshot containing image and disparity arrays when
+            available.
         """
         left_image = None
         right_image = None
@@ -65,15 +104,18 @@ class SnapshotConverter:
 
         if snapshot.left_image is not None:
             left_image = self._image_converter.left_image_to_bgr(
-                snapshot.left_image)
+                snapshot.left_image,
+            )
 
         if snapshot.right_image is not None:
             right_image = self._image_converter.right_image_to_bgr(
-                snapshot.right_image)
+                snapshot.right_image,
+            )
 
         if snapshot.disparity is not None:
             disparity = self._image_converter.disparity_to_array(
-                snapshot.disparity)
+                snapshot.disparity,
+            )
 
         return ConvertedSensorSnapshot(
             left_image=left_image,
@@ -85,12 +127,19 @@ class SnapshotConverter:
         self,
         snapshot: SensorSnapshot,
     ) -> ConvertedSensorSnapshot:
-        """Convert the available point cloud stream to an XYZ NumPy array."""
+        """Convert the available point cloud stream to an XYZ NumPy array.
+
+        Args:
+            snapshot: Source sensor snapshot.
+
+        Returns:
+            Converted snapshot containing ``point_cloud_xyz`` when available.
+        """
         point_cloud_xyz = None
 
         if snapshot.point_cloud is not None:
             point_cloud_xyz = self._pointcloud_converter.pointcloud_to_xyz(
-                snapshot.point_cloud
+                snapshot.point_cloud,
             )
 
         return ConvertedSensorSnapshot(point_cloud_xyz=point_cloud_xyz)
@@ -99,12 +148,21 @@ class SnapshotConverter:
         self,
         snapshot: SensorSnapshot,
     ) -> ConvertedSensorSnapshot:
-        """Convert the available point cloud stream to an Open3D PointCloud."""
+        """Convert the available point cloud stream to an Open3D point cloud.
+
+        Args:
+            snapshot: Source sensor snapshot.
+
+        Returns:
+            Converted snapshot containing ``point_cloud_open3d`` when
+            available.
+        """
         point_cloud_open3d = None
 
         if snapshot.point_cloud is not None:
-            point_cloud_open3d = self._open3d_converter.pointcloud_message_to_open3d(
-                snapshot.point_cloud
+            point_cloud_open3d = ...
+            self._open3d_converter.pointcloud_message_to_open3d(
+                snapshot.point_cloud,
             )
 
         return ConvertedSensorSnapshot(point_cloud_open3d=point_cloud_open3d)
@@ -114,7 +172,15 @@ class SnapshotConverter:
         snapshot: SensorSnapshot,
         include_open3d: bool = False,
     ) -> ConvertedSensorSnapshot:
-        """Convert all currently supported streams in a sensor snapshot."""
+        """Convert all currently supported streams in a sensor snapshot.
+
+        Args:
+            snapshot: Source sensor snapshot.
+            include_open3d: Whether to also generate an Open3D point cloud.
+
+        Returns:
+            Converted snapshot containing all available converted payloads.
+        """
         converted_images = self.convert_images_to_bgr(snapshot)
         converted_point_cloud = self.convert_point_cloud_to_xyz(snapshot)
 

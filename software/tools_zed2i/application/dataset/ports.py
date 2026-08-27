@@ -18,8 +18,8 @@ from tools_zed2i.application.dataset.models.dataset_config import (
     DatasetRecordingConfig,
 )
 from tools_zed2i.application.dataset.models.dataset_manifest import (
-    DatasetManifest,
     MANIFEST_FILENAME,
+    DatasetManifest,
 )
 
 

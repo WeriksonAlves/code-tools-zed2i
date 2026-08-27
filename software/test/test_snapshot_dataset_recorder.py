@@ -5,15 +5,18 @@ from typing import Any
 
 import numpy as np
 
-from tools_zed2i.application.dataset.dataset_config import DatasetRecordingConfig
-from tools_zed2i.application.dataset.dataset_writer import SavedSnapshotPaths
-from tools_zed2i.application.dataset.snapshot_recorder import SnapshotDatasetRecorder
+from tools_zed2i.application.dataset.models.dataset_config import DatasetRecordingConfig
+from tools_zed2i.application.dataset.services.snapshot_recorder import (
+    SavedSnapshotPaths,
+    SnapshotDatasetRecorder,
+)
 from tools_zed2i.application.snapshot_converter import ConvertedSensorSnapshot
 from tools_zed2i.domain.snapshot import SensorSnapshot
 
 
 class FakeSnapshotConverter:
-    def convert_all_available(self, snapshot: SensorSnapshot) -> ConvertedSensorSnapshot:
+    def convert_all_available(self, snapshot: SensorSnapshot
+                              ) -> ConvertedSensorSnapshot:
         return ConvertedSensorSnapshot(
             left_image=np.zeros((2, 2, 3), dtype=np.uint8)
             if snapshot.left_image is not None
@@ -43,7 +46,8 @@ class FakeDatasetFileWriter:
     def save_array(self, array: np.ndarray, path: Path) -> None:
         self.saved_arrays.append(path)
 
-    def save_point_cloud_xyz(self, point_cloud_xyz: np.ndarray, path: Path) -> None:
+    def save_point_cloud_xyz(self, point_cloud_xyz: np.ndarray, path: Path
+                             ) -> None:
         self.saved_point_clouds.append(path)
 
     def save_metadata(self, metadata: dict[str, Any], path: Path) -> None:
@@ -57,7 +61,8 @@ class FakeDatasetManifestWriter:
     def create_from_recording_config(self, config: object) -> object:
         return object()
 
-    def save(self, manifest: object, output_path: object | None = None) -> Path:
+    def save(self, manifest: object, output_path: object | None = None
+             ) -> Path:
         del manifest
         del output_path
 
@@ -65,7 +70,8 @@ class FakeDatasetManifestWriter:
         return Path("manifest.json")
 
 
-def test_snapshot_dataset_recorder_creates_dataset_layout(tmp_path: Path) -> None:
+def test_snapshot_dataset_recorder_creates_dataset_layout(tmp_path: Path
+                                                          ) -> None:
     config = DatasetRecordingConfig(
         dataset_root=tmp_path,
         sequence_name="sequence_test",
@@ -86,7 +92,8 @@ def test_snapshot_dataset_recorder_creates_dataset_layout(tmp_path: Path) -> Non
     assert recorder.layout.metadata_path.exists()
 
 
-def test_snapshot_dataset_recorder_saves_available_streams(tmp_path: Path) -> None:
+def test_snapshot_dataset_recorder_saves_available_streams(tmp_path: Path
+                                                           ) -> None:
     writer = FakeDatasetFileWriter()
 
     config = DatasetRecordingConfig(
@@ -131,7 +138,8 @@ def test_snapshot_dataset_recorder_saves_available_streams(tmp_path: Path) -> No
     ]
 
 
-def test_snapshot_dataset_recorder_respects_disabled_streams(tmp_path: Path) -> None:
+def test_snapshot_dataset_recorder_respects_disabled_streams(tmp_path: Path
+                                                             ) -> None:
     writer = FakeDatasetFileWriter()
 
     config = DatasetRecordingConfig(
@@ -176,7 +184,8 @@ def test_snapshot_dataset_recorder_respects_disabled_streams(tmp_path: Path) -> 
     ]
 
 
-def test_snapshot_dataset_recorder_auto_increments_sample_id(tmp_path: Path) -> None:
+def test_snapshot_dataset_recorder_auto_increments_sample_id(tmp_path: Path
+                                                             ) -> None:
     writer = FakeDatasetFileWriter()
 
     config = DatasetRecordingConfig(
