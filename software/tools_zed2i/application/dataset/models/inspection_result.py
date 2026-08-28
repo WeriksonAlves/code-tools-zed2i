@@ -54,7 +54,9 @@ class DatasetSampleInspection:
 
     def has_point_cloud(self) -> bool:
         """Return whether the sample contains a valid point cloud reference."""
-        return self.point_cloud_path is not None and self.point_count is not None
+        return (
+            self.point_cloud_path is not None and self.point_count is not None
+        )
 
 
 @dataclass(frozen=True)

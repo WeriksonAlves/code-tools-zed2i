@@ -53,8 +53,11 @@ class DatasetManifestWriter:
             notes=notes,
         )
 
-    def save(self, manifest: DatasetManifest, output_path: Path | None = None
-             ) -> Path:
+    def save(
+        self,
+        manifest: DatasetManifest,
+        output_path: Path | None = None,
+    ) -> Path:
         """Save a dataset manifest to disk.
 
         Args:
@@ -112,8 +115,13 @@ class DatasetManifestWriter:
                 )
 
             return DatasetManifest.from_mapping(raw_manifest)
-        except (OSError, json.JSONDecodeError, KeyError, TypeError, ValueError
-                ) as exception:
+        except (
+            OSError,
+            json.JSONDecodeError,
+            KeyError,
+            TypeError,
+            ValueError,
+        ) as exception:
             raise DatasetManifestError(
                 f"Failed to load dataset manifest from "
                 f"{manifest_path}: {exception}"

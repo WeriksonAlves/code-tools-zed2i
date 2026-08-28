@@ -22,9 +22,9 @@ class DatasetWriterError(RuntimeError):
 class DatasetFileWriter:
     """Low-level file-system writer for dataset sample artifacts.
 
-    This class is an infrastructure adapter. It should contain concrete I/O
-    details such as directory creation, image writing, NumPy array persistence,
-    and metadata serialization.
+    This class is an infrastructure adapter. It contains concrete I/O details
+    such as directory creation, image writing, NumPy array persistence, and
+    metadata serialization.
     """
 
     def save_image(self, image: np.ndarray, path: Path) -> None:
@@ -43,7 +43,8 @@ class DatasetFileWriter:
 
             if not success:
                 raise DatasetWriterError(
-                    f"cv2.imwrite returned False for {path}")
+                    f"cv2.imwrite returned False for {path}"
+                )
         except (OSError, cv2.error) as exception:
             raise DatasetWriterError(
                 f"Failed to save image to {path}: {exception}"
