@@ -92,8 +92,10 @@ class SnapshotDatasetRecorder:
         resolved_sample_id = sample_id or self._make_sample_id()
 
         try:
-            converted_snapshot = self._snapshot_converter.convert_all_available(
-                snapshot=snapshot,
+            converted_snapshot = (
+                self._snapshot_converter.convert_all_available(
+                    snapshot=snapshot,
+                )
             )
             saved_paths = self._save_converted_snapshot(
                 converted_snapshot=converted_snapshot,
