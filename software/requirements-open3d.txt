@@ -1,3 +1,8 @@
+# Optional Open3D environment for tools_zed2i.
+#
+# These versions were selected to remain compatible with ROS 2 Humble,
+# Python 3.10, cv_bridge, colcon, and Open3D-based point cloud processing.
+
 numpy==1.26.4
 scipy==1.11.4
 scikit-learn==1.4.2

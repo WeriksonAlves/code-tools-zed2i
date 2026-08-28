@@ -1,12 +1,16 @@
+"""Launch file for the tools_zed2i dataset recorder node."""
+
 from __future__ import annotations
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description() -> LaunchDescription:
+    """Generate the dataset recorder launch description."""
     config_path = LaunchConfiguration("config_path")
     dataset_root = LaunchConfiguration("dataset_root")
     sequence_name = LaunchConfiguration("sequence_name")
@@ -17,7 +21,13 @@ def generate_launch_description() -> LaunchDescription:
         [
             DeclareLaunchArgument(
                 "config_path",
-                default_value="config/zed2i.yaml",
+                default_value=PathJoinSubstitution(
+                    [
+                        FindPackageShare("tools_zed2i"),
+                        "config",
+                        "zed2i.yaml",
+                    ]
+                ),
                 description="Path to the tools_zed2i YAML configuration file.",
             ),
             DeclareLaunchArgument(

@@ -1,8 +1,11 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>tools_zed2i</name>
-  <version>0.1.0</version>
-  <description>Reusable ROS 2 Python module for ZED2i camera integration.</description>
+  <version>0.13.0</version>
+  <description>
+    Modular ROS 2 Python package for ZED2i camera integration, stream
+    diagnostics, point cloud preprocessing, and dataset recording tools.
+  </description>
 
   <maintainer email="werikson.alves@ufv.br">Werikson Alves</maintainer>
   <license>MIT</license>
@@ -17,11 +20,12 @@
   <exec_depend>cv_bridge</exec_depend>
   <exec_depend>python3-opencv</exec_depend>
   <exec_depend>python3-numpy</exec_depend>
-  <exec_depend>zed_wrapper</exec_depend>
   <exec_depend>python3-yaml</exec_depend>
+  <exec_depend>zed_wrapper</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
+  <test_depend>python3-pytest</test_depend>
 
   <export>
     <build_type>ament_python</build_type>

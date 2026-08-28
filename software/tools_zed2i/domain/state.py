@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 """Runtime state models for ZED2i stream health monitoring.
 
 This module contains domain-level state containers used to estimate topic
@@ -7,6 +5,8 @@ health, stream frequency, stale data conditions, and adapter connection state.
 It does not depend on ROS 2 primitives and can be tested without a running ROS
 graph.
 """
+
+from __future__ import annotations
 
 from dataclasses import dataclass, field
 from time import monotonic

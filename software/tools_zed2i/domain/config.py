@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 """Configuration models for the ZED2i domain.
 
 This module defines immutable configuration objects used by the application and
@@ -11,6 +9,8 @@ hexagonal architecture, YAML loading should be moved to an infrastructure
 adapter, while this module should keep only configuration models and validation
 rules.
 """
+
+from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path

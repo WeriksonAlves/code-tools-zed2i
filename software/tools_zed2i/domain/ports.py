@@ -1,11 +1,11 @@
-from __future__ import annotations
-
 """Domain ports for ZED2i adapters.
 
 Ports define contracts that must be implemented by infrastructure adapters.
 They allow the application layer to depend on abstractions instead of concrete
 technologies such as ROS 2 nodes, hardware drivers, or file-system components.
 """
+
+from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from typing import Any

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 """Sensor snapshot models for ZED2i streams.
 
 This module defines immutable containers that represent the latest available
@@ -7,6 +5,8 @@ messages from the ZED2i sensor streams. It intentionally stores stream payloads
 as generic objects because the domain layer must not depend on ROS 2 message
 types or other infrastructure-specific classes.
 """
+
+from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any
