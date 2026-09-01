@@ -5,7 +5,6 @@ from typing import Any
 
 import numpy as np
 import pytest
-
 from tools_zed2i.infrastructure.converters.open3d_converter import (
     Open3DConversionError,
     Open3DConverter,

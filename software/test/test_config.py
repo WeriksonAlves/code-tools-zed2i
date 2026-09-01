@@ -3,7 +3,6 @@ from typing import Any
 
 import pytest
 import yaml
-
 from tools_zed2i.domain.config import Zed2iConfig
 
 

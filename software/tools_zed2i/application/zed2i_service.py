@@ -52,6 +52,5 @@ class Zed2iService:
         return self._frame_reader.get_latest_frame(POINT_CLOUD_STREAM)
 
     def get_sensor_snapshot(self) -> SensorSnapshot:
-        """Return a snapshot containing the latest available stream payloads.
-        """
+        """Return a snapshot containing the latest available stream payloads."""
         return self._frame_reader.get_sensor_snapshot()

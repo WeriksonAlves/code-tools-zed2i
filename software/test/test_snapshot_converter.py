@@ -27,7 +27,7 @@ class FakeOpen3DConverter:
         return f"converted_open3d:{pointcloud_message}"
 
 
-def test_snapshot_converter_returns_empty_snapshot_when_no_images_are_available() -> None:
+def test_returns_empty_snapshot_when_no_images_are_available() -> None:
     converter = SnapshotConverter(
         image_converter=FakeImageConverter(),
         pointcloud_converter=FakePointCloudConverter(),
@@ -60,7 +60,9 @@ def test_snapshot_converter_converts_available_image_streams() -> None:
     assert converted_snapshot.is_empty() is False
     assert converted_snapshot.left_image == "converted_left:left_message"
     assert converted_snapshot.right_image == "converted_right:right_message"
-    assert converted_snapshot.disparity == "converted_disparity:disparity_message"
+    assert (
+        converted_snapshot.disparity == "converted_disparity:disparity_message"
+    )
 
 
 def test_snapshot_converter_ignores_missing_streams() -> None:
@@ -91,7 +93,10 @@ def test_snapshot_converter_converts_point_cloud_stream() -> None:
     converted_snapshot = converter.convert_point_cloud_to_xyz(snapshot)
 
     assert converted_snapshot.is_empty() is False
-    assert converted_snapshot.point_cloud_xyz == "converted_xyz:point_cloud_message"
+    assert (
+        converted_snapshot.point_cloud_xyz
+        == "converted_xyz:point_cloud_message"
+    )
 
 
 def test_snapshot_converter_converts_all_available_streams() -> None:
@@ -115,9 +120,17 @@ def test_snapshot_converter_converts_all_available_streams() -> None:
 
     assert converted_snapshot.left_image == "converted_left:left_message"
     assert converted_snapshot.right_image == "converted_right:right_message"
-    assert converted_snapshot.disparity == "converted_disparity:disparity_message"
-    assert converted_snapshot.point_cloud_xyz == "converted_xyz:point_cloud_message"
-    assert converted_snapshot.point_cloud_open3d == "converted_open3d:point_cloud_message"
+    assert (
+        converted_snapshot.disparity == "converted_disparity:disparity_message"
+    )
+    assert (
+        converted_snapshot.point_cloud_open3d
+        == "converted_open3d:point_cloud_message"
+    )
+    assert (
+        converted_snapshot.point_cloud_open3d
+        == "converted_open3d:point_cloud_message"
+    )
 
 
 def test_snapshot_converter_does_not_convert_open3d_by_default() -> None:
@@ -131,5 +144,8 @@ def test_snapshot_converter_does_not_convert_open3d_by_default() -> None:
 
     converted_snapshot = converter.convert_all_available(snapshot)
 
-    assert converted_snapshot.point_cloud_xyz == "converted_xyz:point_cloud_message"
+    assert (
+        converted_snapshot.point_cloud_xyz
+        == "converted_xyz:point_cloud_message"
+    )
     assert converted_snapshot.point_cloud_open3d is None

@@ -4,10 +4,13 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-
-from tools_zed2i.application.dataset import (
+from tools_zed2i.application.dataset.models.dataset_config import (
     DatasetRecordingConfig,
+)
+from tools_zed2i.application.dataset.models.saved_snapshot_paths import (
     SavedSnapshotPaths,
+)
+from tools_zed2i.application.dataset.services.snapshot_recorder import (
     SnapshotDatasetRecorder,
 )
 from tools_zed2i.application.snapshot_converter import ConvertedSensorSnapshot

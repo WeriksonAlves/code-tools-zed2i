@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from tools_zed2i.application.dataset import DatasetRecordingConfig
+from tools_zed2i.application.dataset.models import DatasetRecordingConfig
 from tools_zed2i.infrastructure.dataset import (
     DatasetManifestWriter,
 )

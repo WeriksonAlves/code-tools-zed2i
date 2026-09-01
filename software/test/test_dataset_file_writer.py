@@ -4,7 +4,6 @@ import json
 from pathlib import Path
 
 import numpy as np
-
 from tools_zed2i.application.dataset.services.snapshot_recorder import DatasetFileWriter
 
 

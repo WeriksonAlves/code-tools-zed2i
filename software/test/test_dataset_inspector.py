@@ -6,8 +6,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 import pytest
-
-from tools_zed2i.application.dataset import (
+from tools_zed2i.application.dataset.services.dataset_inspector import (
     DatasetInspectionError,
     DatasetInspector,
 )

@@ -7,7 +7,6 @@ from pathlib import Path
 import cv2
 import numpy as np
 import pytest
-
 from tools_zed2i.application.dataset.models.dataset_config import DatasetRecordingConfig
 from tools_zed2i.application.dataset.services.dataset_exporter import (
     DatasetExporter,
