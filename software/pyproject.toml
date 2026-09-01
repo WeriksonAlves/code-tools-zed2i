@@ -1,0 +1,65 @@
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+src = ["tools_zed2i", "test"]
+
+[tool.ruff.lint]
+select = [
+    "A",
+    "ARG",
+    "B",
+    "BLE",
+    "C4",
+    "D",
+    "E",
+    "F",
+    "I",
+    "N",
+    "PERF",
+    "PL",
+    "RET",
+    "RUF",
+    "SIM",
+    "TRY",
+    "UP",
+    "W",
+]
+ignore = [
+    "D100",
+    "D104",
+    "D107",
+    "PLR0913",
+
+    # Exception style rules are too restrictive for the current package stage.
+    # We keep explicit custom exceptions, but allow contextual messages.
+    "TRY003",
+    "TRY300",
+    "TRY301",
+
+    # Literal values are acceptable in tests and small validation checks.
+    "PLR2004",
+
+    # Lazy imports are intentionally used for optional dependencies such as Open3D.
+    "PLC0415",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"test/**/*.py" = [
+    "D101",
+    "D102",
+    "D103",
+    "ARG001",
+    "ARG002",
+    "PLR2004",
+]
+
+"tools_zed2i/infrastructure/converters/open3d_converter.py" = [
+    "PLC0415",
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
+python_files = ["test_*.py"]

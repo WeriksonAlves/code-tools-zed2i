@@ -3,12 +3,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from tools_zed2i.application.dataset.inspection.inspection_report import (
-    DatasetInspectionReportWriter,
-)
-from tools_zed2i.application.dataset.inspection.inspection_result import (
+from tools_zed2i.application.dataset.models.inspection_result import (
     DatasetInspectionSummary,
     DatasetSampleInspection,
+)
+from tools_zed2i.application.dataset.reports.inspection_report import (
+    DatasetInspectionReportWriter,
 )
 
 
@@ -43,7 +43,8 @@ def test_dataset_inspection_report_writer_saves_json(tmp_path: Path) -> None:
     assert loaded_report["samples"][0]["sample_id"] == "000000"
 
 
-def test_dataset_inspection_report_writer_saves_markdown(tmp_path: Path) -> None:
+def test_dataset_inspection_report_writer_saves_markdown(tmp_path: Path
+                                                         ) -> None:
     summary = DatasetInspectionSummary(
         dataset_path=tmp_path / "dataset",
         total_samples=1,

@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from tools_zed2i.application.dataset.dataset_config import DatasetRecordingConfig
-from tools_zed2i.application.dataset.dataset_manifest import (
+from tools_zed2i.application.dataset.models import DatasetRecordingConfig
+from tools_zed2i.infrastructure.dataset import (
     DatasetManifestWriter,
 )
 
@@ -37,7 +37,8 @@ def test_dataset_manifest_writer_creates_manifest_from_recording_config(
     assert "metadata" in manifest.enabled_streams
 
 
-def test_dataset_manifest_writer_saves_and_loads_manifest(tmp_path: Path) -> None:
+def test_dataset_manifest_writer_saves_and_loads_manifest(tmp_path: Path
+                                                          ) -> None:
     config = DatasetRecordingConfig(
         dataset_root=tmp_path,
         sequence_name="sequence_test",

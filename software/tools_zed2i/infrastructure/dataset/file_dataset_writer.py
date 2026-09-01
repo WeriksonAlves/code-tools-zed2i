@@ -1,7 +1,13 @@
+"""File-system writer adapter for recorded ZED2i dataset samples.
+
+This module contains infrastructure-level file writing operations used by the
+dataset recording application service. It performs concrete disk I/O using
+OpenCV, NumPy, and JSON serialization.
+"""
+
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -13,22 +19,24 @@ class DatasetWriterError(RuntimeError):
     """Raised when a dataset file cannot be written."""
 
 
-@dataclass(frozen=True)
-class SavedSnapshotPaths:
-    """Paths generated for one recorded sensor snapshot."""
-
-    left_image_path: Path | None = None
-    right_image_path: Path | None = None
-    disparity_path: Path | None = None
-    point_cloud_path: Path | None = None
-    metadata_path: Path | None = None
-
-
 class DatasetFileWriter:
-    """File-system writer for dataset files."""
+    """Low-level file-system writer for dataset sample artifacts.
+
+    This class is an infrastructure adapter. It contains concrete I/O details
+    such as directory creation, image writing, NumPy array persistence, and
+    metadata serialization.
+    """
 
     def save_image(self, image: np.ndarray, path: Path) -> None:
-        """Save an image array to disk."""
+        """Save an image array to disk.
+
+        Args:
+            image: Image array to be written.
+            path: Destination image path.
+
+        Raises:
+            DatasetWriterError: If the image cannot be saved.
+        """
         try:
             path.parent.mkdir(parents=True, exist_ok=True)
             success = cv2.imwrite(str(path), image)
@@ -37,13 +45,21 @@ class DatasetFileWriter:
                 raise DatasetWriterError(
                     f"cv2.imwrite returned False for {path}"
                 )
-        except (cv2.error, OSError) as exception:
+        except (OSError, cv2.error) as exception:
             raise DatasetWriterError(
                 f"Failed to save image to {path}: {exception}"
             ) from exception
 
     def save_array(self, array: np.ndarray, path: Path) -> None:
-        """Save a NumPy array to disk."""
+        """Save a NumPy array to disk.
+
+        Args:
+            array: Array to be saved.
+            path: Destination ``.npy`` path.
+
+        Raises:
+            DatasetWriterError: If the array cannot be saved.
+        """
         try:
             path.parent.mkdir(parents=True, exist_ok=True)
             np.save(path, array)
@@ -52,14 +68,26 @@ class DatasetFileWriter:
                 f"Failed to save array to {path}: {exception}"
             ) from exception
 
-    def save_point_cloud_xyz(
-        self, point_cloud_xyz: np.ndarray, path: Path
-    ) -> None:
-        """Save an XYZ point cloud as a NumPy array."""
-        self.save_array(point_cloud_xyz, path)
+    def save_point_cloud_xyz(self, point_cloud_xyz: np.ndarray, path: Path
+                             ) -> None:
+        """Save an XYZ point cloud as a NumPy array.
+
+        Args:
+            point_cloud_xyz: Point cloud array with shape ``(N, 3)``.
+            path: Destination ``.npy`` path.
+        """
+        self.save_array(array=point_cloud_xyz, path=path)
 
     def save_metadata(self, metadata: dict[str, Any], path: Path) -> None:
-        """Save metadata as a JSON file."""
+        """Save metadata as a JSON file.
+
+        Args:
+            metadata: Metadata dictionary.
+            path: Destination JSON path.
+
+        Raises:
+            DatasetWriterError: If metadata cannot be saved.
+        """
         try:
             path.parent.mkdir(parents=True, exist_ok=True)
 

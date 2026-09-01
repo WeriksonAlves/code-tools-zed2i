@@ -1,3 +1,11 @@
+# tools_zed2i configuration file
+#
+# This file defines the logical ZED2i stream configuration used by the
+# tools_zed2i ROS 2 nodes.
+#
+# The package does not configure the ZED SDK directly. It subscribes to topics
+# already published by the official ZED ROS 2 wrapper.
+
 zed:
   camera_model: "zed2i"
   camera_name: "zed"
@@ -5,6 +13,12 @@ zed:
   input_namespace: "/zed/zed_node"
   output_namespace: "/tools_zed2i"
 
+# Available presets:
+# - minimal
+# - stereo
+# - mapping
+# - pointcloud_only
+# - full
 active_preset: "mapping"
 
 features:

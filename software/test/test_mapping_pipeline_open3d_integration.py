@@ -4,8 +4,7 @@ import importlib.util
 
 import numpy as np
 import pytest
-
-from tools_zed2i.application.mapping_pipeline import (
+from tools_zed2i.application.mapping.preprocessing_pipeline import (
     MappingPreprocessingConfig,
     MappingPreprocessingPipeline,
 )

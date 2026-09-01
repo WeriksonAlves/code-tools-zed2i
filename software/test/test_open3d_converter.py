@@ -5,7 +5,6 @@ from typing import Any
 
 import numpy as np
 import pytest
-
 from tools_zed2i.infrastructure.converters.open3d_converter import (
     Open3DConversionError,
     Open3DConverter,
@@ -33,7 +32,9 @@ def test_open3d_converter_validates_xyz_shape() -> None:
         converter.xyz_array_to_open3d(np.array([[1.0, 2.0]]))
 
 
-def test_open3d_converter_reports_missing_open3d(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_open3d_converter_reports_missing_open3d(
+    monkeypatch: pytest.MonkeyPatch
+) -> None:
     converter = Open3DConverter(pointcloud_converter=FakePointCloudConverter())
 
     monkeypatch.setitem(sys.modules, "open3d", None)

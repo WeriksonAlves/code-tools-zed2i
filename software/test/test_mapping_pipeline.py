@@ -3,13 +3,14 @@ from __future__ import annotations
 from typing import Any
 
 import pytest
-
-from tools_zed2i.application.mapping_pipeline import (
+from tools_zed2i.application.mapping.preprocessing_pipeline import (
     MappingPipelineError,
     MappingPreprocessingConfig,
     MappingPreprocessingPipeline,
 )
-from tools_zed2i.application.pointcloud_processor import PlaneSegmentationResult
+from tools_zed2i.application.pointcloud.pointcloud_processor import (
+    PlaneSegmentationResult,
+)
 from tools_zed2i.domain.snapshot import SensorSnapshot
 
 

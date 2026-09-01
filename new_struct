@@ -1,0 +1,30 @@
+tools_zed2i/
+├── domain/
+│   ├── config.py
+│   ├── snapshot.py
+│   ├── state.py
+│   └── ports.py
+├── application/
+│   ├── dataset/
+│   │   ├── models/
+│   │   ├── services/
+│   │   ├── reports/
+│   │   └── ports.py
+│   ├── mapping/
+│   │   ├── preprocessing_pipeline.py
+│   │   └── plane_segmentation.py
+│   ├── pointcloud/
+│   │   └── pointcloud_processor.py
+│   └── zed2i_service.py
+├── infrastructure/
+│   ├── converters/
+│   ├── dataset/
+│   │   ├── file_dataset_writer.py
+│   │   ├── file_dataset_reader.py
+│   │   ├── file_manifest_repository.py
+│   │   └── file_export_writer.py
+│   ├── open3d/
+│   └── ros2/
+└── scripts/
+    ├── export_dataset.py
+    └── inspect_dataset.py

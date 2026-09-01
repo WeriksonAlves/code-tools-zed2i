@@ -4,8 +4,7 @@ import json
 from pathlib import Path
 
 import numpy as np
-
-from tools_zed2i.application.dataset.dataset_writer import DatasetFileWriter
+from tools_zed2i.application.dataset.services.snapshot_recorder import DatasetFileWriter
 
 
 def test_dataset_file_writer_saves_image(tmp_path: Path) -> None:

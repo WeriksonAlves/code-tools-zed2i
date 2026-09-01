@@ -564,7 +564,7 @@ Example:
 ```python
 from pathlib import Path
 
-from tools_zed2i.application.dataset.dataset_config import DatasetRecordingConfig
+from from tools_zed2i.application.dataset.models.dataset_config import DatasetRecordingConfig
 from tools_zed2i.application.dataset.snapshot_recorder import SnapshotDatasetRecorder
 
 config = DatasetRecordingConfig(
